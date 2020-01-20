@@ -27,8 +27,8 @@ public class UsuarioApi implements UserDetails {
     private String nome;
     private String cnpj;
     private String senha;
-    @ManyToOne
-    private Empresa empresa;
+    //@ManyToOne
+   // private Empresa empresa;
     
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Perfil> perfil = new ArrayList<>();
@@ -149,13 +149,13 @@ public class UsuarioApi implements UserDetails {
         this.login = login;
     }
 
-    public Empresa getEmpresa() {
-        return empresa;
-    }
-
-    public void setEmpresa(Empresa empresa) {
-        this.empresa = empresa;
-    }
+//    public Empresa getEmpresa() {
+//        return empresa;
+//    }
+//
+//    public void setEmpresa(Empresa empresa) {
+//        this.empresa = empresa;
+//    }
     
     
 }

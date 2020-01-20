@@ -1,6 +1,7 @@
 package br.com.lirasistema.promocao.demo.config.security;
 
-import br.com.lira.apiliragestao.repository.UsuarioRepository;
+
+import br.com.lirasistema.promocao.demo.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

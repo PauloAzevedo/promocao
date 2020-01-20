@@ -2,7 +2,8 @@ package br.com.lirasistema.promocao.demo.config.security;
 
 
 
-import br.com.lira.apiliragestao.modelo.UsuarioApi;
+
+import br.com.lirasistema.promocao.demo.modelo.UsuarioApi;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

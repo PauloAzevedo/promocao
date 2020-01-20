@@ -1,8 +1,9 @@
 package br.com.lirasistema.promocao.demo.config.security;
 
 
-import br.com.lira.apiliragestao.modelo.UsuarioApi;
-import br.com.lira.apiliragestao.repository.UsuarioRepository;
+
+import br.com.lirasistema.promocao.demo.modelo.UsuarioApi;
+import br.com.lirasistema.promocao.demo.repository.UsuarioRepository;
 import java.io.IOException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;

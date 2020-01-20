@@ -6,9 +6,9 @@
 package br.com.lirasistema.promocao.demo.config.security;
 
 
-import br.com.lira.apiliragestao.modelo.Usuario;
-import br.com.lira.apiliragestao.modelo.UsuarioApi;
-import br.com.lira.apiliragestao.repository.UsuarioRepository;
+
+import br.com.lirasistema.promocao.demo.modelo.UsuarioApi;
+import br.com.lirasistema.promocao.demo.repository.UsuarioRepository;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
