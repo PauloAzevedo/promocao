@@ -1,0 +1,110 @@
+package br.com.lirasistema.promocao.demo.modelo;
+
+import br.com.lirasistema.promocao.demo.utilidades.Util;
+import java.util.Calendar;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+
+@Entity
+public class Promocao {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Calendar dataCriacao;    
+    private String titulo;
+    private String descricao;
+    private Double valor;
+    private String hashTexto;
+    @ManyToOne
+    private UsuarioApi autor;
+    
+    private Integer situacao; //0 = Ativo; 1 = Inativo
+    
+    public Promocao(){
+        this.dataCriacao = Calendar.getInstance();
+        this.hashTexto = Util.md5(String.valueOf(Calendar.getInstance().getTimeInMillis() + Util.gerarNumeroAleatorio(99999)));        
+        this.situacao = 0;
+    }
+    
+    public Promocao(String titulo, String descricao, Double valor, UsuarioApi autor){
+        this.dataCriacao = Calendar.getInstance();
+        this.hashTexto = Util.md5(String.valueOf(Calendar.getInstance().getTimeInMillis() + Util.gerarNumeroAleatorio(99999)));        
+        this.situacao = 0;
+        this.titulo = titulo;
+        this.descricao = descricao;
+        this.valor = valor;
+        this.autor = autor;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Calendar getDataCriacao() {
+        return dataCriacao;
+    }
+
+    public void setDataCriacao(Calendar dataCriacao) {
+        this.dataCriacao = dataCriacao;
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+
+    public Double getValor() {
+        return valor;
+    }
+
+    public void setValor(Double valor) {
+        this.valor = valor;
+    }
+
+    public String getHashTexto() {
+        return hashTexto;
+    }
+
+    public void setHashTexto(String hashTexto) {
+        this.hashTexto = hashTexto;
+    }
+
+    public UsuarioApi getAutor() {
+        return autor;
+    }
+
+    public void setAutor(UsuarioApi autor) {
+        this.autor = autor;
+    }
+
+    public Integer getSituacao() {
+        return situacao;
+    }
+
+    public void setSituacao(Integer situacao) {
+        this.situacao = situacao;
+    }
+    
+    
+    
+}

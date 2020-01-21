@@ -156,6 +156,13 @@ public class UsuarioApi implements UserDetails {
 //    public void setEmpresa(Empresa empresa) {
 //        this.empresa = empresa;
 //    }
+
+    @Override
+    public String toString() {
+        return login;
+    }
+    
+    
     
     
 }
