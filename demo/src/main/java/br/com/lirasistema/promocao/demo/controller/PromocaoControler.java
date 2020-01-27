@@ -100,11 +100,15 @@ public class PromocaoControler {
 
     @PutMapping("/{id}")
     @Transactional
-    public ResponseEntity<PromocaoDto> atualizar(@PathVariable Long id, @RequestBody @Valid PromocaoForm topicof) {
+    public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody @Valid PromocaoForm topicof, @AuthenticationPrincipal Authentication usuarioLogado) {
+        UsuarioApi usuario = (UsuarioApi) usuarioLogado.getPrincipal();
         Optional<Promocao> opt = promocaoRepository.findById(id);
         if (opt.isPresent()) {
+            if( opt.get().getAutor().equals(usuario)){
             Promocao topico = topicof.atualizar(id, promocaoRepository);
             return ResponseEntity.ok(new PromocaoDto(topico));
+            }
+            return new ResponseEntity<String>("Você não tem permissão para executar essa operação!", HttpStatus.FORBIDDEN);
         }
         return ResponseEntity.notFound().build();
     }

@@ -12,6 +12,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 /**
  *
@@ -32,6 +33,18 @@ public class UsuarioApi implements UserDetails {
     
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Perfil> perfil = new ArrayList<>();
+
+    public UsuarioApi(String login, String nome, String senha) {
+        this.login = login;
+        this.nome = nome;
+        this.senha = new BCryptPasswordEncoder().encode(senha);
+    }
+
+    public UsuarioApi() {
+    }
+    
+    
+        
 
     public Long getId() {
         return id;

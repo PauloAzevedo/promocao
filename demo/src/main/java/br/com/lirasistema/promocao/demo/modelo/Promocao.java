@@ -1,21 +1,20 @@
 package br.com.lirasistema.promocao.demo.modelo;
 
 import br.com.lirasistema.promocao.demo.utilidades.Util;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.Temporal;
 
 @Entity
 public class Promocao {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Calendar dataCriacao;    
+    private LocalDateTime dataCriacao = LocalDateTime.now();    
     private String titulo;
     private String descricao;
     private Double valor;
@@ -26,13 +25,11 @@ public class Promocao {
     private Integer situacao; //0 = Ativo; 1 = Inativo
     
     public Promocao(){
-        this.dataCriacao = Calendar.getInstance();
         this.hashTexto = Util.md5(String.valueOf(Calendar.getInstance().getTimeInMillis() + Util.gerarNumeroAleatorio(99999)));        
         this.situacao = 0;
     }
     
     public Promocao(String titulo, String descricao, Double valor, UsuarioApi autor){
-        this.dataCriacao = Calendar.getInstance();
         this.hashTexto = Util.md5(String.valueOf(Calendar.getInstance().getTimeInMillis() + Util.gerarNumeroAleatorio(99999)));        
         this.situacao = 0;
         this.titulo = titulo;
@@ -49,11 +46,11 @@ public class Promocao {
         this.id = id;
     }
 
-    public Calendar getDataCriacao() {
+    public LocalDateTime getDataCriacao() {
         return dataCriacao;
     }
 
-    public void setDataCriacao(Calendar dataCriacao) {
+    public void setDataCriacao(LocalDateTime dataCriacao) {
         this.dataCriacao = dataCriacao;
     }
 
