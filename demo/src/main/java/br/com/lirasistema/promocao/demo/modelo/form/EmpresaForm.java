@@ -4,6 +4,7 @@ import br.com.lirasistema.promocao.demo.modelo.Cidade;
 import br.com.lirasistema.promocao.demo.modelo.Empresa;
 import br.com.lirasistema.promocao.demo.modelo.Endereco;
 import br.com.lirasistema.promocao.demo.repository.CidadeRepository;
+import br.com.lirasistema.promocao.demo.repository.EmpresaRepository;
 import br.com.lirasistema.promocao.demo.repository.EnderecoRepository;
 import java.util.Optional;
 import javax.validation.constraints.NotEmpty;
@@ -48,6 +49,9 @@ public class EmpresaForm {
     private String cep;
     
     private String complemento;
+    
+    @NotNull
+    private Integer lojaAtiva;
     
     @NotNull @NotEmpty
     private String cidade;
@@ -108,8 +112,6 @@ public class EmpresaForm {
         this.cidade = cidade;
     }
     
-        
-
     public String getFantasia() {
         return fantasia;
     }
@@ -165,7 +167,16 @@ public class EmpresaForm {
     public void setCnpj(String cnpj) {
         this.cnpj = cnpj;
     }
+
+    public Integer getLojaAtiva() {
+        return lojaAtiva;
+    }
+
+    public void setLojaAtiva(Integer lojaAtiva) {
+        this.lojaAtiva = lojaAtiva;
+    }
     
+      
     
     public Empresa converter(EnderecoRepository enderecoRepository, CidadeRepository cidadeRepository) {   
         Endereco end = null;
@@ -175,6 +186,29 @@ public class EmpresaForm {
             enderecoRepository.save(end);
         }
         return new Empresa(fantasia, razaosocial, telefone, celular, caminhoLogo, ramo, cnpj, end);
+    }
+    
+    public Empresa atualizar(Integer id, EmpresaRepository empresaRepository, EnderecoRepository enderecoRepository) {
+        Empresa empE = empresaRepository.getOne(id);
+        empE.setFantasia(this.fantasia);
+        empE.setRazaosocial(this.razaosocial);
+        empE.setCaminhoLogo(this.caminhoLogo);
+        empE.setCelular(this.celular);
+        empE.setTelefone(this.telefone);
+        empE.setLojaAtiva(this.lojaAtiva);
+        empE.setRamo(this.ramo);
+        empE.setLojaAtiva(this.lojaAtiva);
+        Optional<Endereco> endE = enderecoRepository.findById(empE.getEndereco().getId());
+        if(endE.isPresent()){
+            Endereco endObj = endE.get();
+            endObj.setLogradouro(this.logradouro);
+            endObj.setNumero(this.numero);
+            endObj.setComplemento(this.complemento);
+            endObj.setBairro(this.bairro);
+            endObj.setCidade(this.cidade);
+            empE.setEndereco(endObj);
+        }
+        return empE;
     }
     
             

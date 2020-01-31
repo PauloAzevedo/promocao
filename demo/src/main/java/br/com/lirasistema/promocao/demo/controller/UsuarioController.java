@@ -1,18 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.com.lirasistema.promocao.demo.controller;
 
-import br.com.lirasistema.promocao.demo.modelo.Promocao;
 import br.com.lirasistema.promocao.demo.modelo.UsuarioApi;
-import br.com.lirasistema.promocao.demo.modelo.dto.DetalhesPromocaoDto;
-import br.com.lirasistema.promocao.demo.modelo.dto.PromocaoDto;
 import br.com.lirasistema.promocao.demo.modelo.dto.UsuarioApiDto;
 import br.com.lirasistema.promocao.demo.modelo.form.AtualizacaoUsuarioApiForm;
-import br.com.lirasistema.promocao.demo.modelo.form.PromocaoForm;
 import br.com.lirasistema.promocao.demo.modelo.form.UsuarioApiForm;
+import br.com.lirasistema.promocao.demo.repository.EmpresaRepository;
 import br.com.lirasistema.promocao.demo.repository.UsuarioRepository;
 import java.net.URI;
 import java.util.Optional;
@@ -37,16 +29,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-/**
- *
- * @author paulo
- */
+
 @RestController
 @RequestMapping("/usuarios")
 public class UsuarioController {
     
     @Autowired
     private UsuarioRepository usuarioRepository;
+    
+    @Autowired
+    private EmpresaRepository empresaRepository;
     
     @GetMapping
     public Page<UsuarioApiDto> lista(@RequestParam(required = false) String login, 
@@ -76,8 +68,8 @@ public class UsuarioController {
     
     @PostMapping
     @Transactional
-    public ResponseEntity<UsuarioApiDto> cadastrar(@RequestBody @Valid UsuarioApiForm promoF, UriComponentsBuilder uriBuilder) {
-        UsuarioApi novoUsuario = promoF.converter();
+    public ResponseEntity<UsuarioApiDto> cadastrar(@RequestBody @Valid UsuarioApiForm usuarioF, UriComponentsBuilder uriBuilder) {
+        UsuarioApi novoUsuario = usuarioF.converter(empresaRepository);
         usuarioRepository.save(novoUsuario);
         URI uri = uriBuilder.path("/usuarios/{id}").buildAndExpand(novoUsuario.getId()).toUri();
         return ResponseEntity.created(uri).body(new UsuarioApiDto(novoUsuario));

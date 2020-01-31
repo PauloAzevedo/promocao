@@ -28,8 +28,8 @@ public class UsuarioApi implements UserDetails {
     private String nome;
     private String cnpj;
     private String senha;
-    //@ManyToOne
-   // private Empresa empresa;
+    @ManyToOne
+    private Empresa empresa;
     
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Perfil> perfil = new ArrayList<>();
@@ -38,6 +38,13 @@ public class UsuarioApi implements UserDetails {
         this.login = login;
         this.nome = nome;
         this.senha = new BCryptPasswordEncoder().encode(senha);
+    }
+    
+    public UsuarioApi(String login, String nome, String senha, Empresa empresa) {
+        this.login = login;
+        this.nome = nome;
+        this.senha = new BCryptPasswordEncoder().encode(senha);
+        this.empresa = empresa;
     }
 
     public UsuarioApi() {
@@ -162,13 +169,13 @@ public class UsuarioApi implements UserDetails {
         this.login = login;
     }
 
-//    public Empresa getEmpresa() {
-//        return empresa;
-//    }
-//
-//    public void setEmpresa(Empresa empresa) {
-//        this.empresa = empresa;
-//    }
+    public Empresa getEmpresa() {
+        return empresa;
+    }
+
+    public void setEmpresa(Empresa empresa) {
+        this.empresa = empresa;
+    }
 
     @Override
     public String toString() {

@@ -24,6 +24,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -89,4 +90,20 @@ public class EmpresaController {
         URI uri = uriBuilder.path("/empresas/{id}").buildAndExpand(empresa.getId()).toUri();
         return ResponseEntity.created(uri).body(new EmpresaDto(empresa));
     }
+
+    @PutMapping("/{id}")
+    @Transactional
+    public ResponseEntity<?> atualizar(@PathVariable Integer id, @RequestBody @Valid EmpresaForm empF, @AuthenticationPrincipal Authentication usuarioLogado) {
+        UsuarioApi usuario = (UsuarioApi) usuarioLogado.getPrincipal();
+        Optional<Empresa> opt = empresaRepository.findById(id);
+        if (opt.isPresent()) {
+            if(usuario.getEmpresa()!= null && usuario.getEmpresa().getHashTexto().equals(opt.get().getHashTexto())){
+                Empresa empresaE = empF.atualizar(id, empresaRepository, enderecoRepository);
+                return ResponseEntity.ok(new EmpresaDto(empresaE));
+            }
+            return new ResponseEntity<String>("Você não tem permissão para executar essa operação!", HttpStatus.FORBIDDEN);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
 }
