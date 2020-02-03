@@ -82,7 +82,7 @@ public class GrupoController {
         if (usuario != null) {
             Grupo grupo = grupoF.converter(usuario);
             grupoRepository.save(grupo);
-            URI uri = uriBuilder.path("/empresas/{id}").buildAndExpand(grupo.getId()).toUri();
+            URI uri = uriBuilder.path("/grupos/{id}").buildAndExpand(grupo.getId()).toUri();
             return ResponseEntity.created(uri).body(new GrupoDto(grupo));
         }
         return new ResponseEntity<String>("Você não tem permissão para executar essa operação!", HttpStatus.FORBIDDEN);

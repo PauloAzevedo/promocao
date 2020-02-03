@@ -63,7 +63,7 @@ public class ItemDto {
         return situacao;
     }
     
-    public Page<ItemDto> converter(Page<Item> itens){
+    public static Page<ItemDto> converter(Page<Item> itens){
         return itens.map(ItemDto::new);
     }
     

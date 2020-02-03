@@ -13,7 +13,7 @@ public class Item {
     private Long id; 
     private Integer idDaEmpresa;
     private String descricao;    
-    private String referencia;    
+    private Long referencia;    
     private String composicao;
     private Double valor;
     private String unidadeComercial;
@@ -30,7 +30,7 @@ public class Item {
         
     }
 
-    public Item(Integer idDaEmpresa, String descricao, String referencia, String composicao, Double valor, String unidadeComercial, String caminhoImagem, String hashTexto, Integer situacao, Empresa empresa, Grupo grupo) {
+    public Item(Integer idDaEmpresa, String descricao, Long referencia, String composicao, Double valor, String unidadeComercial, String caminhoImagem, String hashTexto, Integer situacao, Empresa empresa, Grupo grupo) {
         this.idDaEmpresa = idDaEmpresa;
         this.descricao = descricao;
         this.referencia = referencia;
@@ -70,11 +70,11 @@ public class Item {
         this.descricao = descricao;
     }
 
-    public String getReferencia() {
+    public Long getReferencia() {
         return referencia;
     }
 
-    public void setReferencia(String referencia) {
+    public void setReferencia(Long referencia) {
         this.referencia = referencia;
     }
 

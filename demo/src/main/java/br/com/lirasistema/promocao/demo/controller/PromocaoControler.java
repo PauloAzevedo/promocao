@@ -5,7 +5,6 @@ import br.com.lirasistema.promocao.demo.modelo.UsuarioApi;
 import br.com.lirasistema.promocao.demo.modelo.dto.DetalhesPromocaoDto;
 import br.com.lirasistema.promocao.demo.modelo.dto.PromocaoDto;
 import br.com.lirasistema.promocao.demo.modelo.form.PromocaoForm;
-import br.com.lirasistema.promocao.demo.repository.EnderecoRepository;
 import br.com.lirasistema.promocao.demo.repository.PromocaoRepository;
 import java.net.URI;
 import java.util.Optional;
