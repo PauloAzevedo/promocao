@@ -5,9 +5,11 @@ import br.com.lirasistema.promocao.demo.modelo.UsuarioApi;
 import br.com.lirasistema.promocao.demo.modelo.dto.DetalhesEmpresaDto;
 import br.com.lirasistema.promocao.demo.modelo.dto.EmpresaDto;
 import br.com.lirasistema.promocao.demo.modelo.form.EmpresaForm;
+import br.com.lirasistema.promocao.demo.modelo.form.UsuarioApiVinculoEmpresaForm;
 import br.com.lirasistema.promocao.demo.repository.CidadeRepository;
 import br.com.lirasistema.promocao.demo.repository.EmpresaRepository;
 import br.com.lirasistema.promocao.demo.repository.EnderecoRepository;
+import br.com.lirasistema.promocao.demo.repository.UsuarioRepository;
 import java.net.URI;
 import java.util.Optional;
 import javax.transaction.Transactional;
@@ -43,6 +45,9 @@ public class EmpresaController {
 
     @Autowired
     private CidadeRepository cidadeRepository;
+    
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     @GetMapping
     public Page<EmpresaDto> lista(@RequestParam(required = false) String descricao, @RequestParam(required = false) String filtro,
@@ -83,12 +88,19 @@ public class EmpresaController {
 
     @PostMapping
     @Transactional
-    public ResponseEntity<EmpresaDto> cadastrar(@RequestBody @Valid EmpresaForm empF, UriComponentsBuilder uriBuilder, @AuthenticationPrincipal Authentication usuarioLogado) {
-        // UsuarioApi usuario = (UsuarioApi) usuarioLogado.getPrincipal();
-        Empresa empresa = empF.converter(enderecoRepository, cidadeRepository);
-        empresaRepository.save(empresa);
-        URI uri = uriBuilder.path("/empresas/{id}").buildAndExpand(empresa.getId()).toUri();
-        return ResponseEntity.created(uri).body(new EmpresaDto(empresa));
+    public ResponseEntity<?> cadastrar(@RequestBody @Valid EmpresaForm empF, UriComponentsBuilder uriBuilder, @AuthenticationPrincipal Authentication usuarioLogado) {
+        UsuarioApi usuario = (UsuarioApi) usuarioLogado.getPrincipal();
+        if (usuario != null) {
+            Empresa empresa = empF.converter(enderecoRepository, cidadeRepository);
+            empresaRepository.save(empresa);
+            //usuario = usuarioVinculo.vincularEmpresa(usuario.getId(), usuarioRepository, empresaRepository, empresa.getId());
+            usuario.setEmpresa(empresa);
+            usuarioRepository.save(usuario);
+            URI uri = uriBuilder.path("/empresas/{id}").buildAndExpand(empresa.getId()).toUri();
+            return ResponseEntity.created(uri).body(new EmpresaDto(empresa));
+        } else {
+            return new ResponseEntity<String>("Você não tem permissão para executar essa operação!", HttpStatus.FORBIDDEN);
+        }
     }
 
     @PutMapping("/{id}")
@@ -97,7 +109,7 @@ public class EmpresaController {
         UsuarioApi usuario = (UsuarioApi) usuarioLogado.getPrincipal();
         Optional<Empresa> opt = empresaRepository.findById(id);
         if (opt.isPresent()) {
-            if(usuario.getEmpresa()!= null && usuario.getEmpresa().getHashTexto().equals(opt.get().getHashTexto())){
+            if (usuario.getEmpresa() != null && usuario.getEmpresa().getHashTexto().equals(opt.get().getHashTexto())) {
                 Empresa empresaE = empF.atualizar(id, empresaRepository, enderecoRepository);
                 return ResponseEntity.ok(new EmpresaDto(empresaE));
             }

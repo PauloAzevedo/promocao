@@ -29,19 +29,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-
 @RestController
 @RequestMapping("/usuarios")
 public class UsuarioController {
-    
+
     @Autowired
     private UsuarioRepository usuarioRepository;
-    
+
     @Autowired
     private EmpresaRepository empresaRepository;
-    
+
     @GetMapping
-    public Page<UsuarioApiDto> lista(@RequestParam(required = false) String login, 
+    public Page<UsuarioApiDto> lista(@RequestParam(required = false) String login,
             @PageableDefault(sort = "id", direction = Sort.Direction.DESC, page = 0, size = 10) Pageable paginacao, @AuthenticationPrincipal Authentication usuarioLogado) {
         UsuarioApi usuario = (UsuarioApi) usuarioLogado.getPrincipal();
         if (usuario != null) {
@@ -52,7 +51,7 @@ public class UsuarioController {
         }
         return null;
     }
-    
+
     @GetMapping("/{id}")
     public ResponseEntity<?> detalhar(@PathVariable Long id, @AuthenticationPrincipal Authentication usuarioLogado) {
         UsuarioApi usuario = (UsuarioApi) usuarioLogado.getPrincipal();
@@ -65,29 +64,33 @@ public class UsuarioController {
         }
         return new ResponseEntity<String>("Você não tem permissão para executar essa operação!", HttpStatus.FORBIDDEN);
     }
-    
+
     @PostMapping
     @Transactional
-    public ResponseEntity<UsuarioApiDto> cadastrar(@RequestBody @Valid UsuarioApiForm usuarioF, UriComponentsBuilder uriBuilder) {
-        UsuarioApi novoUsuario = usuarioF.converter(empresaRepository);
-        usuarioRepository.save(novoUsuario);
-        URI uri = uriBuilder.path("/usuarios/{id}").buildAndExpand(novoUsuario.getId()).toUri();
-        return ResponseEntity.created(uri).body(new UsuarioApiDto(novoUsuario));
+    public ResponseEntity<?> cadastrar(@RequestBody @Valid UsuarioApiForm usuarioF, UriComponentsBuilder uriBuilder) {
+        Optional<UsuarioApi> usuarioExiste = usuarioRepository.findByLogin(usuarioF.getLogin());
+        if (!usuarioExiste.isPresent()) {
+            UsuarioApi novoUsuario = usuarioF.converter(empresaRepository);
+            usuarioRepository.save(novoUsuario);
+            URI uri = uriBuilder.path("/usuarios/{id}").buildAndExpand(novoUsuario.getId()).toUri();
+            return ResponseEntity.created(uri).body(new UsuarioApiDto(novoUsuario));
+        }
+        return new ResponseEntity<String>("Cadastro já existente para o login: " + usuarioExiste.get().getLogin(), HttpStatus.CONFLICT);
     }
-    
+
     @PutMapping("/{id}")
     @Transactional
     public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody @Valid AtualizacaoUsuarioApiForm usuarioF, @AuthenticationPrincipal Authentication usuarioLogado) {
         UsuarioApi usuario = (UsuarioApi) usuarioLogado.getPrincipal();
         Optional<UsuarioApi> opt = usuarioRepository.findById(id);
         if (opt.isPresent()) {
-            if( opt.get().equals(usuario)){
-            UsuarioApi topico = usuarioF.atualizar(id, usuarioRepository);
-            return ResponseEntity.ok(new UsuarioApiDto(topico));
+            if (opt.get().equals(usuario)) {
+                UsuarioApi topico = usuarioF.atualizar(id, usuarioRepository);
+                return ResponseEntity.ok(new UsuarioApiDto(topico));
             }
             return new ResponseEntity<String>("Você não tem permissão para executar essa operação!", HttpStatus.FORBIDDEN);
         }
         return ResponseEntity.notFound().build();
     }
-    
+
 }

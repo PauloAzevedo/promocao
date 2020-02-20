@@ -13,4 +13,6 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     
     public Page<Item> findByEmpresaId(Integer empresa, Pageable paginacao);
     
+   
+    
 }

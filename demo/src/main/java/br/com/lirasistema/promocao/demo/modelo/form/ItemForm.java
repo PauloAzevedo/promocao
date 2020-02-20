@@ -20,10 +20,10 @@ public class ItemForm {
     @NotNull @NotEmpty @Length(min = 3)
     private String composicao;
     
-    @NotNull @NotEmpty @Length(min = 3)
+    @NotNull
     private Long referencia;
     
-    @NotNull @NotEmpty @Length(min = 3)
+    @NotNull @NotEmpty @Length(min = 2)
     private String unidadeComercial;
     
     

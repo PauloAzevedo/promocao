@@ -14,10 +14,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-/**
- *
- * @author paulo
- */
+
 @Entity
 public class UsuarioApi implements UserDetails {
     
@@ -26,7 +23,6 @@ public class UsuarioApi implements UserDetails {
     private Long id;
     private String login;
     private String nome;
-    private String cnpj;
     private String senha;
     @ManyToOne
     private Empresa empresa;
@@ -67,14 +63,6 @@ public class UsuarioApi implements UserDetails {
 
     public void setNome(String nome) {
         this.nome = nome;
-    }
-
-    public String getCnpj() {
-        return cnpj;
-    }
-
-    public void setCnpj(String cnpj) {
-        this.cnpj = cnpj;
     }
 
     public String getSenha() {
