@@ -775,5 +775,7 @@ public class PedidoDeVenda {
         this.vendedor = vendedor;
     }
     
-    
+    public String getSituacaoWeb(){
+        return situacaoNota;
+    }
 }
