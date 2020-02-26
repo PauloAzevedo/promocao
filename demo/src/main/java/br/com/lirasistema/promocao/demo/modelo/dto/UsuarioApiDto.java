@@ -8,11 +8,16 @@ public class UsuarioApiDto {
     private Long id;    
     private String login;
     private String nome;
+    private String empresa;
+    
 
     public UsuarioApiDto(UsuarioApi user) {
         this.id = user.getId();
         this.login = user.getLogin();
         this.nome = user.getNome();
+        if(user.getEmpresa()!=null){
+            this.empresa = user.getEmpresa().toString();
+        }
     }
     
      
@@ -27,6 +32,10 @@ public class UsuarioApiDto {
 
     public String getNome() {
         return nome;
+    }
+
+    public String getEmpresa() {
+        return empresa;
     }
     
     public static Page<UsuarioApiDto> converter(Page<UsuarioApi> usuarios){

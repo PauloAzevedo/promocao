@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 /**
  *
@@ -16,6 +17,19 @@ public class CentroCusto {
     private Integer id;
     private Integer idDaEmpresa;
     private String descricao;
+    
+    @ManyToOne
+    private Empresa empresa;
+
+    public CentroCusto() {
+    }
+
+    public CentroCusto(Integer idDaEmpresa, String descricao, Empresa empresa) {
+        this.idDaEmpresa = idDaEmpresa;
+        this.descricao = descricao;
+        this.empresa = empresa;
+    }
+    
 
     public Integer getId() {
         return id;
@@ -44,6 +58,14 @@ public class CentroCusto {
     @Override
     public String toString() {
         return  idDaEmpresa + " - " + descricao;
+    }
+
+    public Empresa getEmpresa() {
+        return empresa;
+    }
+
+    public void setEmpresa(Empresa empresa) {
+        this.empresa = empresa;
     }
     
     
