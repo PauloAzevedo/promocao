@@ -1,11 +1,20 @@
 package br.com.lirasistema.promocao.demo.controller;
 
+import br.com.lirasistema.promocao.demo.modelo.Cliente;
 import br.com.lirasistema.promocao.demo.modelo.PedidoDeVenda;
 import br.com.lirasistema.promocao.demo.modelo.UsuarioApi;
+import br.com.lirasistema.promocao.demo.modelo.dto.ClienteDto;
 import br.com.lirasistema.promocao.demo.modelo.dto.DetalhePedidoDeVendaDto;
 import br.com.lirasistema.promocao.demo.modelo.dto.PedidoDeVendaDto;
+import br.com.lirasistema.promocao.demo.modelo.form.AtualizarClienteForm;
+import br.com.lirasistema.promocao.demo.modelo.form.AtualizarPedidoForm;
+import br.com.lirasistema.promocao.demo.modelo.form.ClienteForm;
+import br.com.lirasistema.promocao.demo.modelo.form.PedidoForm;
 import br.com.lirasistema.promocao.demo.repository.PedidoDeVendaRepository;
+import java.net.URI;
 import java.util.Optional;
+import javax.transaction.Transactional;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,9 +26,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequestMapping("/pedidos")
@@ -63,7 +76,7 @@ public class PedidoDeVendaController {
         }
         return null;
     }
-    
+
     @GetMapping("/{id}")
     public ResponseEntity<?> detalhar(@PathVariable Integer id, @AuthenticationPrincipal Authentication usuarioLogado) {
         UsuarioApi usuario = (UsuarioApi) usuarioLogado.getPrincipal();
@@ -77,4 +90,36 @@ public class PedidoDeVendaController {
         return new ResponseEntity<String>("Você não tem permissão para executar essa operação!", HttpStatus.FORBIDDEN);
 
     }
+
+    @PostMapping
+    @Transactional
+    public ResponseEntity<?> cadastrar(@RequestBody @Valid PedidoForm pedidoF, UriComponentsBuilder uriBuilder, @AuthenticationPrincipal Authentication usuarioLogado) {
+        UsuarioApi usuario = (UsuarioApi) usuarioLogado.getPrincipal();
+        if (usuario != null) {
+            PedidoDeVenda pedidoNovo = pedidoF.converter(usuario);
+            pedidoDeVendaRepository.save(pedidoNovo);
+            URI uri = uriBuilder.path("/pedidos/{id}").buildAndExpand(pedidoNovo.getNumeroNota()).toUri();
+            return ResponseEntity.created(uri).body(new PedidoDeVendaDto(pedidoNovo));
+        }
+        return new ResponseEntity<String>("Você não tem permissão para executar essa operação!", HttpStatus.FORBIDDEN);
+    }
+    
+    @PutMapping("/{id}")
+    @Transactional
+    public ResponseEntity<?> atualizar(@PathVariable Integer id, @RequestBody @Valid AtualizarPedidoForm pedidoA, @AuthenticationPrincipal Authentication usuarioLogado) {
+        UsuarioApi usuario = (UsuarioApi) usuarioLogado.getPrincipal();
+        if (usuario != null) {
+            Optional<PedidoDeVenda> opt = pedidoDeVendaRepository.procurarPorIdDaEmpresaEEmpresa(id, usuario.getEmpresa().getId());
+            if (opt.isPresent()) {
+                if (usuario.getEmpresa() != null && usuario.getEmpresa().getId() == opt.get().getEmitente().getId()) {
+                    PedidoDeVenda pedidoE = pedidoA.atualizar(usuario);
+                    return ResponseEntity.ok(new PedidoDeVendaDto(pedidoE));
+                }
+                return new ResponseEntity<String>("Você não tem permissão para executar essa operação!", HttpStatus.FORBIDDEN);
+            }
+            return ResponseEntity.notFound().build();
+        }
+        return new ResponseEntity<String>("Você não tem permissão para executar essa operação!", HttpStatus.FORBIDDEN);
+    }
+
 }
