@@ -5,20 +5,36 @@ import java.time.LocalDateTime;
 import org.springframework.data.domain.Page;
 
 public class PedidoAppDto {
-    
-    private Long id;    
-    private Integer numero;    
-    private String cliente;   
-    private String empresa;     
-    private Integer situacao;    
-    private LocalDateTime dataCriacao;    
-    private LocalDateTime dataAceite;    
-    private LocalDateTime dataEntrega;    
-    private Double totalValorProdutos;    
-    private Double totalValorAcrescimos;    
-    private Double totalValorDescontos;    
-    private Double totalValorPedido;    
+
+    private Long id;
+    private Integer numero;
+    private String cliente;
+    private String empresa;
+    private Integer situacao;
+    private LocalDateTime dataCriacao;
+    private LocalDateTime dataAceite;
+    private LocalDateTime dataEntrega;
+    private Double totalValorProdutos;
+    private Double totalValorAcrescimos;
+    private Double totalValorDescontos;
+    private Double totalValorPedido;
     private String condicaoDePagamento;
+
+    public PedidoAppDto(PedidoApp pedido) {
+        this.id = pedido.getId();
+        this.numero = pedido.getNumero();
+        this.cliente = pedido.getCliente().toString();
+        this.empresa = pedido.getEmpresa().toString();
+        this.situacao = pedido.getSituacao();
+        this.dataCriacao = pedido.getDataCriacao();
+        this.dataAceite = pedido.getDataAceite();
+        this.dataEntrega = pedido.getDataEntrega();
+        this.totalValorProdutos = pedido.getTotalValorProdutos();
+        this.totalValorAcrescimos = pedido.getTotalValorAcrescimos();
+        this.totalValorDescontos = pedido.getTotalValorDescontos();
+        this.totalValorPedido = pedido.getTotalValorPedido();
+        this.condicaoDePagamento = pedido.getCondicaoDePagamento().toString();
+    }
 
     public Long getId() {
         return id;
@@ -123,8 +139,9 @@ public class PedidoAppDto {
     public void setCondicaoDePagamento(String condicaoDePagamento) {
         this.condicaoDePagamento = condicaoDePagamento;
     }
-    
+
     public static Page<PedidoAppDto> converter(Page<PedidoApp> pedidos) {
         return pedidos.map(PedidoAppDto::new);
     }
+
 }

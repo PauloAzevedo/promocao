@@ -13,12 +13,20 @@ public interface PedidoAppRepository extends JpaRepository<PedidoApp, Long>{
     
     public Page<PedidoApp> findByClienteId(Integer id, Pageable paginacao);
     
+    public Page<PedidoApp> findById(Integer id, Pageable paginacao);
+    
+    
+    @Query("SELECT t FROM PedidoApp t WHERE t.numero  =  :numero  AND cliente_id = :cliente")
+    public Optional<PedidoApp> procurarPorNumeroECliente(@Param("numero") Integer numero, @Param("cliente") Integer cliente);
     
     @Query("SELECT t FROM PedidoApp t WHERE t.numero  =  :numero  AND emitente_id = :empresa")
-    public Optional<PedidoApp> procurarPorNumeroECliente(@Param("numero") Integer numero, @Param("cliente") Integer cliente);
+    public Optional<PedidoApp> procurarPorNumeroEEmpresa(@Param("numero") Integer numero, @Param("empresa") Integer empresa);
+   
     
     @Query("SELECT t FROM PedidoApp t WHERE empresa = :empresa")
     public Page<PedidoApp> procurarTodosPorEmpresa(@Param("empresa") Integer empresa, Pageable paginacao);
+    
+    
     
     @Query("SELECT t FROM PedidoApp t WHERE cliente = :cliente")
     public Page<PedidoApp> procurarTodosPorCliente(@Param("cliente") Integer cliente, Pageable paginacao);
