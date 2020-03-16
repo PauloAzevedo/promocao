@@ -10,6 +10,7 @@ import br.com.lirasistema.promocao.demo.modelo.form.EmpresaForm;
 import br.com.lirasistema.promocao.demo.repository.CidadeRepository;
 import br.com.lirasistema.promocao.demo.repository.ClienteRepository;
 import br.com.lirasistema.promocao.demo.repository.EnderecoRepository;
+import br.com.lirasistema.promocao.demo.repository.UsuarioRepository;
 import java.net.URI;
 import java.util.Optional;
 import javax.transaction.Transactional;
@@ -45,6 +46,9 @@ public class ClienteController {
 
     @Autowired
     private CidadeRepository cidadeRepository;
+    
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     @GetMapping
     public Page<ClienteDto> lista(@RequestParam(required = false) String descricao, @RequestParam(required = false) String filtro,
@@ -100,7 +104,7 @@ public class ClienteController {
     @Transactional
     public ResponseEntity<?> cadastrar(@RequestBody @Valid ClienteForm clienteF, UriComponentsBuilder uriBuilder, @AuthenticationPrincipal Authentication usuarioLogado) {
         UsuarioApi usuario = (UsuarioApi) usuarioLogado.getPrincipal();
-        if (usuario != null) {
+        if (usuario != null && usuario.getEmpresa() != null) {
             Optional<Cliente> clienteExiste = clienteRepository.procurarClientePorCNPJIdenticoEEmpresa(clienteF.getCnpj(), usuario.getEmpresa().getId());
             if (!clienteExiste.isPresent()) {
                 Cliente cliente = clienteF.converter(enderecoRepository, cidadeRepository, usuario, clienteRepository);
@@ -109,6 +113,18 @@ public class ClienteController {
                 return ResponseEntity.created(uri).body(new ClienteDto(cliente));
             }
             return new ResponseEntity<String>("Cadastro já existente com o ID: " + clienteExiste.get().getIdDaEmpresa(), HttpStatus.CONFLICT);
+        } else if (usuario != null ) {
+            Optional<Cliente> clienteExiste = clienteRepository.procurarClientePorCNPJIdenticoEEmpresa(clienteF.getCnpj(), usuario.getEmpresa().getId());
+            if (!clienteExiste.isPresent()) {
+                Cliente cliente = clienteF.converter(enderecoRepository, cidadeRepository, usuario, clienteRepository);
+                clienteRepository.save(cliente);
+                usuario.setCliente(cliente);
+                usuarioRepository.save(usuario);
+                URI uri = uriBuilder.path("/clientes/{id}").buildAndExpand(cliente.getIdDaEmpresa()).toUri();
+                return ResponseEntity.created(uri).body(new ClienteDto(cliente));
+            }
+            return new ResponseEntity<String>("Cadastro já existente com o ID: " + clienteExiste.get().getIdDaEmpresa(), HttpStatus.CONFLICT);
+        
         }
         return new ResponseEntity<String>("Você não tem permissão para executar essa operação!", HttpStatus.FORBIDDEN);
     }

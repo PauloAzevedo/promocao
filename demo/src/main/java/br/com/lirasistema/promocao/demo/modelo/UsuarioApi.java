@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -25,7 +26,10 @@ public class UsuarioApi implements UserDetails {
     private String nome;
     private String senha;
     @ManyToOne
-    private Empresa empresa;
+    private Empresa empresa;    
+    
+    @OneToOne
+    private Cliente cliente;
     
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Perfil> perfil = new ArrayList<>();
@@ -169,8 +173,14 @@ public class UsuarioApi implements UserDetails {
     public String toString() {
         return login;
     }
-    
-    
+
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
+    }
     
     
 }

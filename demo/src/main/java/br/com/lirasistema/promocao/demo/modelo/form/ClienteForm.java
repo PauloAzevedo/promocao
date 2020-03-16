@@ -22,59 +22,77 @@ import org.hibernate.validator.constraints.Length;
  * @author paulo
  */
 public class ClienteForm {
-    @NotNull @NotEmpty @Length(min = 5, max = 100)
+
+    @NotNull
+    @NotEmpty
+    @Length(min = 5, max = 100)
     private String fantasia;
-    
-    @NotNull @NotEmpty @Length(min = 5)
-    private String razaosocial;   
-      
-    @NotNull @NotEmpty @Length(min = 5)
+
+    @NotNull
+    @NotEmpty
+    @Length(min = 5)
+    private String razaosocial;
+
+    @NotNull
+    @NotEmpty
+    @Length(min = 5)
     private String telefone;
-    
-    @NotNull @NotEmpty @Length(min = 5)
+
+    @NotNull
+    @NotEmpty
+    @Length(min = 5)
     private String celular;
-    
+
     @NotNull
     private Integer tipo;
-    
+
     @NotNull
     private Integer pessoa;
-    
-    @NotNull @NotEmpty @Length(min = 5)
+
+    @NotNull
+    @NotEmpty
+    @Length(min = 5)
     private String email;
-    
+
     private String responsavel;
-    
-    private String telefoneResponsavel;    
-    
+
+    private String telefoneResponsavel;
+
     private String cpfResponsavel;
-    
-    @NotNull @NotEmpty @Length(min = 5)
+
+    @NotNull
+    @NotEmpty
+    @Length(min = 5)
     private String cnpj;
-    
-    @NotNull @NotEmpty @Length(min = 5)
+
+    @NotNull
+    @NotEmpty
+    @Length(min = 5)
     private String rg_InscricaoEstadual;
-    
-    @NotNull @NotEmpty @Length(min = 5)
-    private String logradouro;    
-    
+
+    @NotNull
+    @NotEmpty
+    @Length(min = 5)
+    private String logradouro;
+
     private String tpLogradouro;
-    
-    @NotNull 
+
+    @NotNull
     private String bairro;
-    
+
     @NotNull
     private String numero;
-    
-    @NotNull @NotEmpty
+
+    @NotNull
+    @NotEmpty
     private String cep;
-    
+
     private String complemento;
-    
+
     private String observacao;
-    
-        
-    @NotNull @NotEmpty
+
+    @NotNull
+    @NotEmpty
     private String cidade;
 
     public String getLogradouro() {
@@ -132,7 +150,7 @@ public class ClienteForm {
     public void setCidade(String cidade) {
         this.cidade = cidade;
     }
-    
+
     public String getFantasia() {
         return fantasia;
     }
@@ -165,7 +183,6 @@ public class ClienteForm {
         this.celular = celular;
     }
 
-   
     public String getCnpj() {
         return cnpj;
     }
@@ -173,8 +190,6 @@ public class ClienteForm {
     public void setCnpj(String cnpj) {
         this.cnpj = cnpj;
     }
-
-   
 
     public String getEmail() {
         return email;
@@ -239,14 +254,11 @@ public class ClienteForm {
     public void setCpfResponsavel(String cpfResponsavel) {
         this.cpfResponsavel = cpfResponsavel;
     }
-    
-        
-         
-    
-    public Cliente converter(EnderecoRepository enderecoRepository, CidadeRepository cidadeRepository, UsuarioApi usuario, ClienteRepository clienteRepository) {   
+
+    public Cliente converter(EnderecoRepository enderecoRepository, CidadeRepository cidadeRepository, UsuarioApi usuario, ClienteRepository clienteRepository) {
         Endereco end = null;
         Optional<Cidade> cidadeObj = cidadeRepository.findByCodigoIBGE(cidade);
-        if(cidadeObj.isPresent()){
+        if (cidadeObj.isPresent()) {
             end = new Endereco(logradouro, tpLogradouro, bairro, numero, cep, complemento, cidadeObj.get(), cidade);
             enderecoRepository.save(end);
         }
@@ -255,12 +267,16 @@ public class ClienteForm {
             totalClientes = clienteRepository.maiorCadastro(usuario.getEmpresa().getId());
             totalClientes += 1;
             System.out.println(totalClientes);
-        } catch (Exception ex){
+        } catch (Exception ex) {
             totalClientes = 1;
-        }        
-        return new Cliente(razaosocial, fantasia, telefone, celular, email, rg_InscricaoEstadual, cnpj, responsavel, telefoneResponsavel, observacao, tipo, pessoa, cpfResponsavel, end, usuario.getEmpresa(), totalClientes);
+        }
+        if (usuario.getEmpresa() != null) {
+            return new Cliente(razaosocial, fantasia, telefone, celular, email, rg_InscricaoEstadual, cnpj, responsavel, telefoneResponsavel, observacao, tipo, pessoa, cpfResponsavel, end, usuario.getEmpresa(), totalClientes);
+        } else {
+            return new Cliente(razaosocial, fantasia, telefone, celular, email, rg_InscricaoEstadual, cnpj, responsavel, telefoneResponsavel, observacao, tipo, pessoa, cpfResponsavel, end, null, totalClientes);
+        }
     }
-    
+
     public Cliente atualizar(Integer id, ClienteRepository clienteRepository, EnderecoRepository enderecoRepository) {
         Cliente clienteE = clienteRepository.getOne(id);
         clienteE.setFantasia(this.fantasia);
@@ -268,7 +284,7 @@ public class ClienteForm {
         clienteE.setCelular(this.celular);
         clienteE.setTelefone(this.telefone);
         Optional<Endereco> endE = enderecoRepository.findById(clienteE.getEndereco().getId());
-        if(endE.isPresent()){
+        if (endE.isPresent()) {
             Endereco endObj = endE.get();
             endObj.setLogradouro(this.logradouro);
             endObj.setNumero(this.numero);
@@ -279,5 +295,5 @@ public class ClienteForm {
         }
         return clienteE;
     }
-    
+
 }
