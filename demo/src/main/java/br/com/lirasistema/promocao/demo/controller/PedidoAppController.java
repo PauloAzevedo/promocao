@@ -5,6 +5,7 @@ import br.com.lirasistema.promocao.demo.modelo.UsuarioApi;
 import br.com.lirasistema.promocao.demo.modelo.dto.PedidoAppDto;
 import br.com.lirasistema.promocao.demo.modelo.form.AtualizarPedidoAppForm;
 import br.com.lirasistema.promocao.demo.modelo.form.PedidoAppForm;
+import br.com.lirasistema.promocao.demo.repository.ItemRepository;
 import br.com.lirasistema.promocao.demo.repository.PedidoAppRepository;
 import java.net.URI;
 import java.util.Optional;
@@ -34,6 +35,11 @@ public class PedidoAppController {
 
     @Autowired
     private PedidoAppRepository pedidoAppRepository;
+    
+    @Autowired
+    private ItemRepository itemRepository;
+    
+    
 
     @GetMapping
     public Page<PedidoAppDto> lista(
@@ -68,7 +74,7 @@ public class PedidoAppController {
     public ResponseEntity<?> cadastrar(@RequestBody @Valid PedidoAppForm pedidoAppF, UriComponentsBuilder uriBuilder, @AuthenticationPrincipal Authentication usuarioLogado) {
         UsuarioApi usuario = (UsuarioApi) usuarioLogado.getPrincipal();
         if (usuario != null) {
-            PedidoApp pedidoNovo = pedidoAppF.converter(usuario);
+            PedidoApp pedidoNovo = pedidoAppF.converter(usuario, itemRepository, pedidoAppRepository);
             pedidoAppRepository.save(pedidoNovo);
             URI uri = uriBuilder.path("/pedidos/{id}").buildAndExpand(pedidoNovo.getId()).toUri();
             return ResponseEntity.created(uri).body(new PedidoAppDto(pedidoNovo));

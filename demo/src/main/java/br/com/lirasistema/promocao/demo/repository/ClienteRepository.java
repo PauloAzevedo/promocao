@@ -39,8 +39,12 @@ public interface ClienteRepository extends JpaRepository<Cliente, Integer> {
     @Query("SELECT count(*) FROM Cliente t WHERE  empresa_id = :empresa")
     public Integer totalCadastros(@Param("empresa") Integer empresa);
     
-    @Query("SELECT t FROM Cliente t WHERE t.cpf_Cnpj  =  :cpf_Cnpj  AND empresa_id = :empresa")
+    @Query("SELECT t FROM Cliente t WHERE t.cpf_Cnpj  =  :cpf_Cnpj  AND cliente_id = :cliente")
+    public Optional<Cliente> procurarClientePorCNPJIdenticoECliente(@Param("cpf_Cnpj") String descricao,@Param("cliente") Integer cliente);
+    
+     @Query("SELECT t FROM Cliente t WHERE t.cpf_Cnpj  =  :cpf_Cnpj  AND empresa_id = :empresa")
     public Optional<Cliente> procurarClientePorCNPJIdenticoEEmpresa(@Param("cpf_Cnpj") String descricao,@Param("empresa") Integer empresa);
+   
     
     @Query("SELECT max(idDaEmpresa) FROM Cliente t WHERE  empresa_id = :empresa")
     public Integer maiorCadastro(@Param("empresa") Integer empresa);

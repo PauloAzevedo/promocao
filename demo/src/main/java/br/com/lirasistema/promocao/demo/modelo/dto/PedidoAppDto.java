@@ -33,7 +33,9 @@ public class PedidoAppDto {
         this.totalValorAcrescimos = pedido.getTotalValorAcrescimos();
         this.totalValorDescontos = pedido.getTotalValorDescontos();
         this.totalValorPedido = pedido.getTotalValorPedido();
-        this.condicaoDePagamento = pedido.getCondicaoDePagamento().toString();
+        if (pedido.getCondicaoDePagamento() != null) {
+            this.condicaoDePagamento = pedido.getCondicaoDePagamento().toString();
+        }
     }
 
     public Long getId() {

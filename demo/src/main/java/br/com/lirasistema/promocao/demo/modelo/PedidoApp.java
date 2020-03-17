@@ -45,15 +45,16 @@ public class PedidoApp {
         
     }
 
-    public PedidoApp(Cliente cliente, Empresa empresa, Integer situacao, Double totalValorProdutos, Double totalValorAcrescimos, Double totalValorDescontos, Double totalValorPedido, CondicaoDePagamento condicaoDePagamento) {
+    public PedidoApp(Cliente cliente, Empresa empresa, Integer numer, Integer situacao, Double totalValorProdutos, 
+            Double totalValorAcrescimos, Double totalValorDescontos, Double totalValorPedido) {
         this.cliente = cliente;
         this.empresa = empresa;
+        this.numero = numer;
         this.situacao = situacao;
         this.totalValorProdutos = totalValorProdutos;
         this.totalValorAcrescimos = totalValorAcrescimos;
         this.totalValorDescontos = totalValorDescontos;
         this.totalValorPedido = totalValorPedido;
-        this.condicaoDePagamento = condicaoDePagamento;
     }
 
     public Long getId() {

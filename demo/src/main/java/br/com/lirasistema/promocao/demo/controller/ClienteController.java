@@ -46,7 +46,7 @@ public class ClienteController {
 
     @Autowired
     private CidadeRepository cidadeRepository;
-    
+
     @Autowired
     private UsuarioRepository usuarioRepository;
 
@@ -113,18 +113,13 @@ public class ClienteController {
                 return ResponseEntity.created(uri).body(new ClienteDto(cliente));
             }
             return new ResponseEntity<String>("Cadastro já existente com o ID: " + clienteExiste.get().getIdDaEmpresa(), HttpStatus.CONFLICT);
-        } else if (usuario != null ) {
-            Optional<Cliente> clienteExiste = clienteRepository.procurarClientePorCNPJIdenticoEEmpresa(clienteF.getCnpj(), usuario.getEmpresa().getId());
-            if (!clienteExiste.isPresent()) {
-                Cliente cliente = clienteF.converter(enderecoRepository, cidadeRepository, usuario, clienteRepository);
-                clienteRepository.save(cliente);
-                usuario.setCliente(cliente);
-                usuarioRepository.save(usuario);
-                URI uri = uriBuilder.path("/clientes/{id}").buildAndExpand(cliente.getIdDaEmpresa()).toUri();
-                return ResponseEntity.created(uri).body(new ClienteDto(cliente));
-            }
-            return new ResponseEntity<String>("Cadastro já existente com o ID: " + clienteExiste.get().getIdDaEmpresa(), HttpStatus.CONFLICT);
-        
+        } else if (usuario != null && usuario.getCliente() == null) {
+            Cliente cliente = clienteF.converter(enderecoRepository, cidadeRepository, usuario, clienteRepository);
+            clienteRepository.save(cliente);
+            usuario.setCliente(cliente);
+            usuarioRepository.save(usuario);
+            URI uri = uriBuilder.path("/clientes/{id}").buildAndExpand(cliente.getIdDaEmpresa()).toUri();
+            return ResponseEntity.created(uri).body(new ClienteDto(cliente));
         }
         return new ResponseEntity<String>("Você não tem permissão para executar essa operação!", HttpStatus.FORBIDDEN);
     }

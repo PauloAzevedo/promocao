@@ -262,18 +262,19 @@ public class ClienteForm {
             end = new Endereco(logradouro, tpLogradouro, bairro, numero, cep, complemento, cidadeObj.get(), cidade);
             enderecoRepository.save(end);
         }
-        Integer totalClientes = 0;
-        try {
-            totalClientes = clienteRepository.maiorCadastro(usuario.getEmpresa().getId());
-            totalClientes += 1;
-            System.out.println(totalClientes);
-        } catch (Exception ex) {
-            totalClientes = 1;
-        }
+
         if (usuario.getEmpresa() != null) {
+            Integer totalClientes = 0;
+            try {
+                totalClientes = clienteRepository.maiorCadastro(usuario.getEmpresa().getId());
+                totalClientes += 1;
+                System.out.println(totalClientes);
+            } catch (Exception ex) {
+                totalClientes = 1;
+            }
             return new Cliente(razaosocial, fantasia, telefone, celular, email, rg_InscricaoEstadual, cnpj, responsavel, telefoneResponsavel, observacao, tipo, pessoa, cpfResponsavel, end, usuario.getEmpresa(), totalClientes);
         } else {
-            return new Cliente(razaosocial, fantasia, telefone, celular, email, rg_InscricaoEstadual, cnpj, responsavel, telefoneResponsavel, observacao, tipo, pessoa, cpfResponsavel, end, null, totalClientes);
+            return new Cliente(razaosocial, fantasia, telefone, celular, email, rg_InscricaoEstadual, cnpj, responsavel, telefoneResponsavel, observacao, tipo, pessoa, cpfResponsavel, end, null, 1);
         }
     }
 

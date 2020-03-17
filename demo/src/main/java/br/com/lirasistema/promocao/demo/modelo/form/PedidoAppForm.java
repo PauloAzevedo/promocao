@@ -1,31 +1,25 @@
 package br.com.lirasistema.promocao.demo.modelo.form;
 
+import br.com.lirasistema.promocao.demo.modelo.Item;
 import br.com.lirasistema.promocao.demo.modelo.PedidoApp;
 import br.com.lirasistema.promocao.demo.modelo.UsuarioApi;
+import br.com.lirasistema.promocao.demo.repository.ItemRepository;
+import br.com.lirasistema.promocao.demo.repository.PedidoAppRepository;
+import java.util.Optional;
 import javax.validation.constraints.NotNull;
 
 public class PedidoAppForm {
-
-    @NotNull
-    private Integer situacao;
-
-    @NotNull
-    private Double totalValorProdutos;
 
     @NotNull
     private Double totalValorAcrescimos;
 
     @NotNull
     private Double totalValorDescontos;
+    
+    @NotNull
+    private Long idItemGlobal;
 
-    public void setSituacao(Integer situacao) {
-        this.situacao = situacao;
-    }
-
-    public void setTotalValorProdutos(Double totalValorProdutos) {
-        this.totalValorProdutos = totalValorProdutos;
-    }
-
+    
     public void setTotalValorAcrescimos(Double totalValorAcrescimos) {
         this.totalValorAcrescimos = totalValorAcrescimos;
     }
@@ -34,26 +28,23 @@ public class PedidoAppForm {
         this.totalValorDescontos = totalValorDescontos;
     }
 
-    public PedidoApp converter(UsuarioApi usuario) {
-//        Endereco end = null;
-//        Optional<Cidade> cidadeObj = cidadeRepository.findByCodigoIBGE(cidade);
-//        if (cidadeObj.isPresent()) {
-//            end = new Endereco(logradouro, tpLogradouro, bairro, numero, cep, complemento, cidadeObj.get(), cidade);
-//            enderecoRepository.save(end);
-//        }
-//        Integer totalClientes = 0;
-//        try {
-//            totalClientes = clienteRepository.maiorCadastro(usuario.getEmpresa().getId());
-//            totalClientes += 1;
-//            System.out.println(totalClientes);
-//        } catch (Exception ex) {
-//            totalClientes = 1;
-//        }
-//        if (usuario.getEmpresa() != null) {
-//            return new Cliente(razaosocial, fantasia, telefone, celular, email, rg_InscricaoEstadual, cnpj, responsavel, telefoneResponsavel, observacao, tipo, pessoa, cpfResponsavel, end, usuario.getEmpresa(), totalClientes);
-//        } else {
-//            return new Cliente(razaosocial, fantasia, telefone, celular, email, rg_InscricaoEstadual, cnpj, responsavel, telefoneResponsavel, observacao, tipo, pessoa, cpfResponsavel, end, null, totalClientes);
-//        }
+    public void setIdItemGlobal(Long idItemGlobal) {
+        this.idItemGlobal = idItemGlobal;
+    }
+    
+    
+    public PedidoApp converter(UsuarioApi usuario, ItemRepository itemRepository, PedidoAppRepository pedidoAppRepository) {        
+        Optional<Item> itemObj = itemRepository.findById(idItemGlobal);
+        if (itemObj.isPresent() && usuario.getCliente()!=null) {
+            Integer totalPedidosDoCliente = 0;
+            try {
+                totalPedidosDoCliente = pedidoAppRepository.maiorCadastro(usuario.getCliente().getId());
+                totalPedidosDoCliente += 1;
+            } catch (Exception ex) {
+                totalPedidosDoCliente = 1;
+            }
+            return new PedidoApp(usuario.getCliente(),itemObj.get().getEmpresa(),totalPedidosDoCliente,-1, itemObj.get().getValor(), 0.0, 0.0,itemObj.get().getValor());
+        }
         return null;
     }
 
