@@ -13,7 +13,7 @@ public interface PedidoAppRepository extends JpaRepository<PedidoApp, Long>{
     
     public Page<PedidoApp> findByClienteId(Integer id, Pageable paginacao);
     
-    public Page<PedidoApp> findById(Integer id, Pageable paginacao);
+    //public Page<PedidoApp> findById(Long id, Pageable paginacao);
     
     
     @Query("SELECT t FROM PedidoApp t WHERE t.numero  =  :numero  AND cliente_id = :cliente")

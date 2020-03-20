@@ -5,6 +5,7 @@ import br.com.lirasistema.promocao.demo.modelo.UsuarioApi;
 import br.com.lirasistema.promocao.demo.modelo.dto.PedidoAppDto;
 import br.com.lirasistema.promocao.demo.modelo.form.AtualizarPedidoAppForm;
 import br.com.lirasistema.promocao.demo.modelo.form.PedidoAppForm;
+import br.com.lirasistema.promocao.demo.repository.CondicaoDePagamentoRepository;
 import br.com.lirasistema.promocao.demo.repository.ItemRepository;
 import br.com.lirasistema.promocao.demo.repository.PedidoAppRepository;
 import java.net.URI;
@@ -38,6 +39,9 @@ public class PedidoAppController {
     
     @Autowired
     private ItemRepository itemRepository;
+    
+    @Autowired
+    private CondicaoDePagamentoRepository condicaoDePagamentoRepository;
     
     
 
@@ -91,7 +95,7 @@ public class PedidoAppController {
             Optional<PedidoApp> opt = pedidoAppRepository.findById(id);
             if (opt.isPresent()) {
                 if (usuario.getEmpresa() != null && usuario.getEmpresa().getId() == opt.get().getEmpresa().getId() || usuario.getCliente().getId() == opt.get().getCliente().getId()) {
-                    PedidoApp pedidoE = pedidoA.atualizar(usuario);
+                    PedidoApp pedidoE = pedidoA.atualizar(id, usuario, itemRepository, pedidoAppRepository, condicaoDePagamentoRepository);
                     return ResponseEntity.ok(new PedidoAppDto(pedidoE));
                 }
                 return new ResponseEntity<String>("Você não tem permissão para executar essa operação!", HttpStatus.FORBIDDEN);
