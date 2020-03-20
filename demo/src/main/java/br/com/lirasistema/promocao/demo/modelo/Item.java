@@ -141,6 +141,11 @@ public class Item {
     public void setGrupo(Grupo grupo) {
         this.grupo = grupo;
     }
+
+    @Override
+    public String toString() {
+        return  idDaEmpresa + " - " + descricao;
+    }
     
     
     
