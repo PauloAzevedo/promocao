@@ -20,6 +20,8 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     public Optional<Item> procurarPorIdDaEmpresaEEmpresa(@Param("idDaEmpresa") Integer idDaEmpresa,@Param("empresa") Integer empresa);
 
     
+
+    
    
     
 }

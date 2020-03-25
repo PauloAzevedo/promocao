@@ -23,8 +23,12 @@ public class PedidoAppDto {
     public PedidoAppDto(PedidoApp pedido) {
         this.id = pedido.getId();
         this.numero = pedido.getNumero();
-        this.cliente = pedido.getCliente().toString();
-        this.empresa = pedido.getEmpresa().toString();
+        if (pedido.getCliente() != null) {
+            this.cliente = pedido.getCliente().toString();
+        }
+        if (pedido.getEmpresa() != null) {
+            this.empresa = pedido.getEmpresa().toString();
+        }
         this.situacao = pedido.getSituacao();
         this.dataCriacao = pedido.getDataCriacao();
         this.dataAceite = pedido.getDataAceite();

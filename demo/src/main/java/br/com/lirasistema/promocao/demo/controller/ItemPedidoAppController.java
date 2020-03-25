@@ -1,9 +1,7 @@
 package br.com.lirasistema.promocao.demo.controller;
 
-import br.com.lirasistema.promocao.demo.modelo.Grupo;
 import br.com.lirasistema.promocao.demo.modelo.ItemPedidoApp;
 import br.com.lirasistema.promocao.demo.modelo.UsuarioApi;
-import br.com.lirasistema.promocao.demo.modelo.dto.GrupoDto;
 import br.com.lirasistema.promocao.demo.modelo.dto.ItemPedidoAppDto;
 import br.com.lirasistema.promocao.demo.modelo.form.GrupoForm;
 import br.com.lirasistema.promocao.demo.modelo.form.ItemPedidoAppForm;
@@ -87,8 +85,8 @@ public class ItemPedidoAppController {
         UsuarioApi usuario = (UsuarioApi) usuarioLogado.getPrincipal();
         Optional<ItemPedidoApp> opt = itemPedidoAppRepository.findById(id);
         if (opt.isPresent()) {
-            if (usuario != null && usuario.getCliente() != null && usuario.getCliente().getId() == opt.get().getPedido().getCliente().getId()) {
-                ItemPedidoApp itemAppE = itemAppF.atualizar(id);
+            if (usuario != null && usuario.getCliente() != null && usuario.getCliente().getId() == opt.get().getPedidoApp().getCliente().getId()) {
+                ItemPedidoApp itemAppE = itemAppF.atualizar(id, itemPedidoAppRepository);
                 return ResponseEntity.ok(new ItemPedidoAppDto(itemAppE));
             } else {
                 return new ResponseEntity<String>("Você não tem permissão para executar essa operação!", HttpStatus.FORBIDDEN);
@@ -106,7 +104,7 @@ public class ItemPedidoAppController {
             return ResponseEntity.notFound().build();
         }
         UsuarioApi usuario = (UsuarioApi) usuarioLogado.getPrincipal();
-        if (usuario != null && usuario.getCliente() != null && usuario.getCliente().getId() == opt.get().getPedido().getCliente().getId()) {
+        if (usuario != null && usuario.getCliente() != null && usuario.getCliente().getId() == opt.get().getPedidoApp().getCliente().getId()) {
             Optional<ItemPedidoApp> itemAppD = itemPedidoAppRepository.findById(id);
             if (itemAppD.isPresent()) {
                 itemPedidoAppRepository.delete(itemAppD.get());

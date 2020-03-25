@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class ItemPedidoApp {
@@ -18,9 +19,11 @@ public class ItemPedidoApp {
     
     private Double valorTotal;
     
+    @ManyToOne
     private Item item;
     
-    private PedidoApp pedido;
+    @ManyToOne
+    private PedidoApp pedidoApp;
 
     public ItemPedidoApp() {
     }
@@ -30,7 +33,7 @@ public class ItemPedidoApp {
         this.valorUnitario = valorUnitario;
         this.valorTotal = valorTotal;
         this.item = item;
-        this.pedido = pedido;
+        this.pedidoApp = pedido;
     }
     
     
@@ -75,13 +78,15 @@ public class ItemPedidoApp {
         this.item = item;
     }
 
-    public PedidoApp getPedido() {
-        return pedido;
+    public PedidoApp getPedidoApp() {
+        return pedidoApp;
     }
 
-    public void setPedido(PedidoApp pedido) {
-        this.pedido = pedido;
+    public void setPedidoApp(PedidoApp pedidoApp) {
+        this.pedidoApp = pedidoApp;
     }
+
+   
     
     
     

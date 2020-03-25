@@ -17,6 +17,9 @@ public class AtualizarPedidoAppForm {
 
     @NotNull
     private Double totalValorDescontos;
+    
+    @NotNull
+    private Double totalValorProdutos;
 
     @NotNull
     private Integer situacao;
@@ -54,14 +57,22 @@ public class AtualizarPedidoAppForm {
     public void setCondicaoDePagamento(Integer condicaoDePagamento) {
         this.condicaoDePagamento = condicaoDePagamento;
     }
+
+    public Double getTotalValorProdutos() {
+        return totalValorProdutos;
+    }
+
+    public void setTotalValorProdutos(Double totalValorProdutos) {
+        this.totalValorProdutos = totalValorProdutos;
+    }
     
-    
+       
 
     public PedidoApp atualizar(Long id, UsuarioApi usuario, ItemRepository itemRepository, PedidoAppRepository pedidoAppRepository, CondicaoDePagamentoRepository condicaoDePagamentoRepository) {
         PedidoApp pedidoE = pedidoAppRepository.getOne(id);
         pedidoE.setTotalValorAcrescimos(totalValorAcrescimos);
         pedidoE.setTotalValorDescontos(totalValorDescontos);
-        //atualizar o valor total de produtos aqui//
+        pedidoE.setTotalValorProdutos(totalValorProdutos);
         Double totalPedido = pedidoE.getTotalValorProdutos() + pedidoE.getTotalValorAcrescimos() - pedidoE.getTotalValorDescontos();
         pedidoE.setTotalValorPedido(totalPedido);
         if(situacao==1){

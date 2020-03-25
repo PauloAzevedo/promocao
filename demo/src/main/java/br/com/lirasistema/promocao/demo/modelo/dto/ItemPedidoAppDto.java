@@ -22,7 +22,7 @@ public class ItemPedidoAppDto {
         this.valorUnitario = itemApp.getValorUnitario();
         this.valorTotal = itemApp.getValorTotal();
         this.item = itemApp.getItem().toString();
-        this.pedido = itemApp.getPedido().getId();
+        this.pedido = itemApp.getPedidoApp().getId();
     }   
     
 

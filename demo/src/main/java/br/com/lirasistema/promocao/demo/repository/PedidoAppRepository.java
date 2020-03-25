@@ -28,8 +28,8 @@ public interface PedidoAppRepository extends JpaRepository<PedidoApp, Long>{
     
     
     
-    @Query("SELECT t FROM PedidoApp t WHERE cliente = :cliente")
-    public Page<PedidoApp> procurarTodosPorCliente(@Param("cliente") Integer cliente, Pageable paginacao);
+    @Query("SELECT t FROM PedidoApp t WHERE cliente_id = :cliente_id")
+    public Page<PedidoApp> procurarTodosPorCliente(@Param("cliente_id") Integer cliente_id, Pageable paginacao);
 
     
     @Query("SELECT max(numero) FROM PedidoApp t WHERE  cliente = :cliente")
