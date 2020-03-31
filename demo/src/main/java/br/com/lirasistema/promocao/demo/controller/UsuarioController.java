@@ -56,11 +56,15 @@ public class UsuarioController {
     public ResponseEntity<?> detalhar(@PathVariable Long id, @AuthenticationPrincipal Authentication usuarioLogado) {
         UsuarioApi usuario = (UsuarioApi) usuarioLogado.getPrincipal();
         if (usuario != null) {
-            Optional<UsuarioApi> promo = usuarioRepository.findById(id);
-            if (promo.isPresent()) {
-                return ResponseEntity.ok(new UsuarioApiDto(promo.get()));
+            if (id != null && id != 0 ) {
+                Optional<UsuarioApi> promo = usuarioRepository.findById(id);
+                if (promo.isPresent()) {
+                    return ResponseEntity.ok(new UsuarioApiDto(promo.get()));
+                }
+                return ResponseEntity.notFound().build();
+            } else {
+                return ResponseEntity.ok(new UsuarioApiDto(usuario));
             }
-            return ResponseEntity.notFound().build();
         }
         return new ResponseEntity<String>("Você não tem permissão para executar essa operação!", HttpStatus.FORBIDDEN);
     }

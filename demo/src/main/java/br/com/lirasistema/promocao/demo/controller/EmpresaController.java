@@ -10,6 +10,7 @@ import br.com.lirasistema.promocao.demo.repository.CidadeRepository;
 import br.com.lirasistema.promocao.demo.repository.EmpresaRepository;
 import br.com.lirasistema.promocao.demo.repository.EnderecoRepository;
 import br.com.lirasistema.promocao.demo.repository.UsuarioRepository;
+import br.com.lirasistema.promocao.demo.utilidades.Util;
 import java.net.URI;
 import java.util.Optional;
 import javax.transaction.Transactional;
@@ -64,7 +65,8 @@ public class EmpresaController {
                 Page<Empresa> empresas = empresaRepository.findByCnpjContaining(descricao, paginacao);
                 return EmpresaDto.converter(empresas);
             } else if (filtro.equals("ramo")) {
-                Page<Empresa> empresas = empresaRepository.findByRamo(descricao, paginacao);
+                Integer ramo = Util.validarInteiro(descricao);
+                Page<Empresa> empresas = empresaRepository.findByRamo(ramo, paginacao);
                 return EmpresaDto.converter(empresas);
             } else {
                 Page<Empresa> empresas = empresaRepository.findAll(paginacao);

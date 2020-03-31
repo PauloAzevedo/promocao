@@ -14,7 +14,7 @@ public interface EmpresaRepository extends JpaRepository<Empresa, Integer> {
     
     public Page<Empresa> findByCnpjContaining(@Param("cnpj") String cnpj, Pageable paginacao);
     
-    public Page<Empresa> findByRamo(@Param("ramo") String ramo, Pageable paginacao);
+    public Page<Empresa> findByRamo(@Param("ramo") Integer ramo, Pageable paginacao);
     
     public Optional<Empresa> findByHashTexto(String hashTexto);
 }

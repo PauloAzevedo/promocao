@@ -83,4 +83,12 @@ public class Util {
         Random random = new Random();
         return random.nextInt(maximo);
     }
+
+    public static Integer validarInteiro(String descricao) {
+        try {
+            return Integer.parseInt(descricao);
+        } catch (Exception ex) {
+            return 0;
+        }
+    }
 }
