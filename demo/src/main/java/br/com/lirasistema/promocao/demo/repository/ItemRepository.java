@@ -19,7 +19,9 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     @Query("SELECT t FROM Item t WHERE t.idDaEmpresa  =  :idDaEmpresa  AND empresa_id = :empresa")
     public Optional<Item> procurarPorIdDaEmpresaEEmpresa(@Param("idDaEmpresa") Integer idDaEmpresa,@Param("empresa") Integer empresa);
 
-    
+    //@Query("SELECT t FROM Item t WHERE t.grupo_id  =  :grupo_id  AND empresa_id = :empresa")
+    //public Optional<Item> procurarPorGrupoEEmpresa(@Param("grupo_id") Integer grupo_id, @Param("empresa") Integer empresa);
+
 
     
    

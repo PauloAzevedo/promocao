@@ -1,16 +1,13 @@
 package br.com.lirasistema.promocao.demo.controller;
 
 import br.com.lirasistema.promocao.demo.modelo.Item;
-import br.com.lirasistema.promocao.demo.modelo.Promocao;
 import br.com.lirasistema.promocao.demo.modelo.UsuarioApi;
 import br.com.lirasistema.promocao.demo.modelo.dto.DetalhesItemDto;
-import br.com.lirasistema.promocao.demo.modelo.dto.DetalhesPromocaoDto;
 import br.com.lirasistema.promocao.demo.modelo.dto.ItemDto;
-import br.com.lirasistema.promocao.demo.modelo.dto.PromocaoDto;
 import br.com.lirasistema.promocao.demo.modelo.form.ItemForm;
-import br.com.lirasistema.promocao.demo.modelo.form.PromocaoForm;
 import br.com.lirasistema.promocao.demo.repository.GrupoRepository;
 import br.com.lirasistema.promocao.demo.repository.ItemRepository;
+import br.com.lirasistema.promocao.demo.utilidades.Util;
 import java.net.URI;
 import java.util.Optional;
 import javax.transaction.Transactional;
@@ -47,7 +44,7 @@ public class ItemController {
     public Page<ItemDto> lista(@RequestParam(required = false) String descricao, @RequestParam(required = false) String filtro,
             @PageableDefault(sort = "id", direction = Sort.Direction.DESC, page = 0, size = 10) Pageable paginacao, @AuthenticationPrincipal Authentication usuarioLogado) {
         UsuarioApi usuario = (UsuarioApi) usuarioLogado.getPrincipal();
-        if (usuario != null) {
+        if (usuario != null && usuario.getEmpresa() != null) {
             if (descricao == null || descricao.isEmpty()) {
                 Page<Item> itens = itemRepository.findAll(paginacao);
                 return ItemDto.converter(itens);
@@ -57,6 +54,10 @@ public class ItemController {
                     return ItemDto.converter(itens);
                 }
             }
+        } else if (usuario != null && usuario.getCliente() != null) {
+            Integer empresa = Util.validarInteiro(descricao);
+            Page<Item> itens = itemRepository.findByEmpresaId(empresa, paginacao);
+            return ItemDto.converter(itens);
         }
         return null;
     }
@@ -79,10 +80,10 @@ public class ItemController {
     public ResponseEntity<?> cadastrar(@RequestBody @Valid ItemForm itemF, UriComponentsBuilder uriBuilder, @AuthenticationPrincipal Authentication usuarioLogado) {
         UsuarioApi usuario = (UsuarioApi) usuarioLogado.getPrincipal();
         if (usuario != null && usuario.getEmpresa() != null) {
-            Item promo = itemF.converter(usuario, grupoRepository);
-            itemRepository.save(promo);
-            URI uri = uriBuilder.path("/itens/{id}").buildAndExpand(promo.getId()).toUri();
-            return ResponseEntity.created(uri).body(new ItemDto(promo));
+            Item itemE=  itemF.converter(usuario, grupoRepository);
+            itemRepository.save(itemE);
+            URI uri = uriBuilder.path("/itens/{id}").buildAndExpand(itemE.getId()).toUri();
+            return ResponseEntity.created(uri).body(new ItemDto(itemE));
         }
         return new ResponseEntity<String>("Você não tem permissão para executar essa operação!", HttpStatus.FORBIDDEN);
     }

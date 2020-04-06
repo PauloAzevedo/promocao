@@ -89,12 +89,18 @@ public class ClienteController {
     @GetMapping("/{id}")
     public ResponseEntity<?> detalhar(@PathVariable Integer id, @AuthenticationPrincipal Authentication usuarioLogado) {
         UsuarioApi usuario = (UsuarioApi) usuarioLogado.getPrincipal();
-        if (usuario != null) {
+        if (usuario != null && usuario.getEmpresa()!=null) {
             Optional<Cliente> cliente = clienteRepository.procurarPorIdDaEmpresaEEmpresa(id, usuario.getEmpresa().getId());
             if (cliente.isPresent()) {
                 return ResponseEntity.ok(new DetalhesDoClienteDto(cliente.get()));
             }
             return ResponseEntity.notFound().build();
+        } else if( usuario != null && usuario.getCliente()!=null ){
+            Optional<Cliente> cliente = clienteRepository.findById(id);
+            if (cliente.isPresent()) {
+                return ResponseEntity.ok(new DetalhesDoClienteDto(cliente.get()));
+            }
+            return ResponseEntity.notFound().build();            
         }
         return new ResponseEntity<String>("Você não tem permissão para executar essa operação!", HttpStatus.FORBIDDEN);
 
@@ -128,10 +134,20 @@ public class ClienteController {
     @Transactional
     public ResponseEntity<?> atualizar(@PathVariable Integer id, @RequestBody @Valid AtualizarClienteForm clienteF, @AuthenticationPrincipal Authentication usuarioLogado) {
         UsuarioApi usuario = (UsuarioApi) usuarioLogado.getPrincipal();
-        if (usuario != null) {
+        if (usuario != null && usuario.getEmpresa() != null) {
             Optional<Cliente> opt = clienteRepository.procurarPorIdDaEmpresaEEmpresa(id, usuario.getEmpresa().getId());
             if (opt.isPresent()) {
                 if (usuario.getEmpresa() != null && usuario.getEmpresa().getId() == opt.get().getEmpresa().getId()) {
+                    Cliente empresaE = clienteF.atualizar(opt.get().getId(), clienteRepository, enderecoRepository, cidadeRepository);
+                    return ResponseEntity.ok(new ClienteDto(empresaE));
+                }
+                return new ResponseEntity<String>("Você não tem permissão para executar essa operação!", HttpStatus.FORBIDDEN);
+            }
+            return ResponseEntity.notFound().build();
+        } else if (usuario != null && usuario.getCliente() != null) {
+            Optional<Cliente> opt = clienteRepository.findById(id);
+            if (opt.isPresent()) {
+                if (usuario.getCliente() != null && usuario.getCliente().getId() == opt.get().getId()) {
                     Cliente empresaE = clienteF.atualizar(opt.get().getId(), clienteRepository, enderecoRepository, cidadeRepository);
                     return ResponseEntity.ok(new ClienteDto(empresaE));
                 }
