@@ -14,6 +14,7 @@ public class ItemDto {
     private String unidadeComercial;
     private String hashTexto;
     private Integer situacao;
+    private Integer empresa;
     
     public ItemDto(Item item ){
         this.id = item.getId();
@@ -25,6 +26,7 @@ public class ItemDto {
         this.unidadeComercial = item.getUnidadeComercial();
         this.hashTexto = item.getHashTexto();
         this.situacao = item.getSituacao();
+        this.empresa = item.getEmpresa().getId();
     }
 
     public Long getId() {
@@ -62,6 +64,12 @@ public class ItemDto {
     public Integer getSituacao() {
         return situacao;
     }
+
+    public Integer getEmpresa() {
+        return empresa;
+    }
+ 
+    
     
     public static Page<ItemDto> converter(Page<Item> itens){
         return itens.map(ItemDto::new);

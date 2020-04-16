@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -36,29 +37,40 @@ public class PedidoAppController {
 
     @Autowired
     private PedidoAppRepository pedidoAppRepository;
-    
+
     @Autowired
     private ItemRepository itemRepository;
-    
+
     @Autowired
     private CondicaoDePagamentoRepository condicaoDePagamentoRepository;
-    
-    
 
     @GetMapping
-    public Page<PedidoAppDto> lista(
+    public Page<PedidoAppDto> lista(@RequestParam(required = false) Integer empresa, @RequestParam(required = false) Integer situacao,
             @PageableDefault(sort = "id", direction = Sort.Direction.DESC, page = 0, size = 10) Pageable paginacao, @AuthenticationPrincipal Authentication usuarioLogado) {
         UsuarioApi usuario = (UsuarioApi) usuarioLogado.getPrincipal();
         if (usuario != null && usuario.getEmpresa() != null) {
             Page<PedidoApp> pdvs = pedidoAppRepository.procurarTodosPorEmpresa(usuario.getEmpresa().getId(), paginacao);
             return PedidoAppDto.converter(pdvs);
         } else if (usuario != null && usuario.getCliente() != null) {
-            Page<PedidoApp> pdvs = pedidoAppRepository.procurarTodosPorCliente(usuario.getCliente().getId(), paginacao);
-            return PedidoAppDto.converter(pdvs);
+            if (empresa != null && situacao != null) {
+                Page<PedidoApp> pdvs = pedidoAppRepository.procurarTodosPorClienteEEmpresaESituacao(usuario.getCliente().getId(), empresa, situacao, paginacao);
+                return PedidoAppDto.converter(pdvs);
+            } else if (situacao != null) {
+                if (situacao == -1) {
+                    Page<PedidoApp> pdvs = pedidoAppRepository.procurarTodosPorClienteComSituacaoDiferenteDe(usuario.getCliente().getId(), situacao, paginacao);
+                    return PedidoAppDto.converter(pdvs);
+                } else {
+                    Page<PedidoApp> pdvs = pedidoAppRepository.procurarTodosPorClienteESituacao(usuario.getCliente().getId(), situacao, paginacao);
+                    return PedidoAppDto.converter(pdvs);
+                }
+            } else {
+                Page<PedidoApp> pdvs = pedidoAppRepository.procurarTodosPorCliente(usuario.getCliente().getId(), paginacao);
+                return PedidoAppDto.converter(pdvs);
+            }
         }
         return null;
     }
-    
+
     @GetMapping("/{id}")
     public ResponseEntity<?> detalhar(@PathVariable Long id, @AuthenticationPrincipal Authentication usuarioLogado) {
         UsuarioApi usuario = (UsuarioApi) usuarioLogado.getPrincipal();
@@ -72,7 +84,7 @@ public class PedidoAppController {
         return new ResponseEntity<String>("Você não tem permissão para executar essa operação!", HttpStatus.FORBIDDEN);
 
     }
-    
+
     @PostMapping
     @Transactional
     public ResponseEntity<?> cadastrar(@RequestBody @Valid PedidoAppForm pedidoAppF, UriComponentsBuilder uriBuilder, @AuthenticationPrincipal Authentication usuarioLogado) {
@@ -85,8 +97,7 @@ public class PedidoAppController {
         }
         return new ResponseEntity<String>("Você não tem permissão para executar essa operação!", HttpStatus.FORBIDDEN);
     }
-    
-    
+
     @PutMapping("/{id}")
     @Transactional
     public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody @Valid AtualizarPedidoAppForm pedidoA, @AuthenticationPrincipal Authentication usuarioLogado) {
@@ -104,5 +115,5 @@ public class PedidoAppController {
         }
         return new ResponseEntity<String>("Você não tem permissão para executar essa operação!", HttpStatus.FORBIDDEN);
     }
-    
+
 }

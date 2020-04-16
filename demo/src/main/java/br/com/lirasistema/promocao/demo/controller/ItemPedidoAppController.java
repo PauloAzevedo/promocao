@@ -73,6 +73,7 @@ public class ItemPedidoAppController {
         if (usuario != null && usuario.getCliente() != null) {
             ItemPedidoApp itemApp = itemAppF.converter(usuario, itemRepository, pedidoAppRepository);
             itemPedidoAppRepository.save(itemApp);
+            //Atualizar dados do pedido            
             URI uri = uriBuilder.path("/itensapp/{id}").buildAndExpand(itemApp.getId()).toUri();
             return ResponseEntity.created(uri).body(new ItemPedidoAppDto(itemApp));
         }
@@ -98,19 +99,18 @@ public class ItemPedidoAppController {
 
     @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity<?> remover(@PathVariable Long id, @AuthenticationPrincipal Authentication usuarioLogado, @RequestBody @Valid GrupoForm grupoD) {
+    public ResponseEntity<?> remover(@PathVariable Long id, @AuthenticationPrincipal Authentication usuarioLogado) {
         Optional<ItemPedidoApp> opt = itemPedidoAppRepository.findById(id);
         if (!opt.isPresent()) {
             return ResponseEntity.notFound().build();
         }
         UsuarioApi usuario = (UsuarioApi) usuarioLogado.getPrincipal();
-        if (usuario != null && usuario.getCliente() != null && usuario.getCliente().getId() == opt.get().getPedidoApp().getCliente().getId()) {
-            Optional<ItemPedidoApp> itemAppD = itemPedidoAppRepository.findById(id);
-            if (itemAppD.isPresent()) {
-                itemPedidoAppRepository.delete(itemAppD.get());
+        if (usuario != null && usuario.getCliente() != null) {              
+            if (usuario.getCliente().getId() == opt.get().getPedidoApp().getCliente().getId()) {
+                itemPedidoAppRepository.delete(opt.get());
                 return ResponseEntity.ok().build();
             }
-            return ResponseEntity.notFound().build();
+            return new ResponseEntity<String>("Você não tem permissão para executar essa operação!", HttpStatus.FORBIDDEN);
         }
         return new ResponseEntity<String>("Você não tem permissão para executar essa operação!", HttpStatus.FORBIDDEN);
     }
