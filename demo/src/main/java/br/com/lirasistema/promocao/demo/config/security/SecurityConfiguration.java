@@ -54,17 +54,18 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/empresas/*").permitAll()
                 .antMatchers(HttpMethod.POST, "/empresas/*").permitAll()
                 .antMatchers(HttpMethod.POST, "/usuarios").permitAll()
-                .antMatchers(HttpMethod.POST, "/auth").permitAll()
-                .anyRequest().authenticated()
+                .antMatchers(HttpMethod.POST, "/auth").permitAll()                
+                .anyRequest().authenticated()                
                 .and().csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().addFilterBefore(new AutenticacaoViaTokenFilter(tokenService, usuarioRepository), UsernamePasswordAuthenticationFilter.class);
+                
     }
 
     //Configurações de recursos estaticos (img, js e img)
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/**.html", "/v2/api-docs", "/webjars/**", "/configuration/**", "/swagger-resources/**");
+        web.ignoring().antMatchers("/**","/**.html", "/v2/api-docs", "/webjars/**", "/configuration/**", "/swagger-resources/**");
     }
     
     
