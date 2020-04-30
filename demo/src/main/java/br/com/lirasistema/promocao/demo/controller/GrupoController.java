@@ -1,14 +1,9 @@
 package br.com.lirasistema.promocao.demo.controller;
 
-import br.com.lirasistema.promocao.demo.modelo.Empresa;
 import br.com.lirasistema.promocao.demo.modelo.Grupo;
 import br.com.lirasistema.promocao.demo.modelo.UsuarioApi;
-import br.com.lirasistema.promocao.demo.modelo.dto.DetalhesEmpresaDto;
-import br.com.lirasistema.promocao.demo.modelo.dto.EmpresaDto;
 import br.com.lirasistema.promocao.demo.modelo.dto.GrupoDto;
-import br.com.lirasistema.promocao.demo.modelo.form.EmpresaForm;
 import br.com.lirasistema.promocao.demo.modelo.form.GrupoForm;
-import br.com.lirasistema.promocao.demo.repository.EmpresaRepository;
 import br.com.lirasistema.promocao.demo.repository.GrupoRepository;
 import java.net.URI;
 import java.util.Optional;
@@ -44,9 +39,13 @@ public class GrupoController {
     @GetMapping
     public Page<GrupoDto> lista(@RequestParam(required = false) String descricao, @RequestParam(required = false) Integer empresa, @RequestParam(required = false) String filtro,
             @PageableDefault(sort = "id", direction = Sort.Direction.DESC, page = 0, size = 10) Pageable paginacao, @AuthenticationPrincipal Authentication usuarioLogado) {
-
-        if (descricao == null || descricao.equals("")) {
-            Page<Grupo> empresas = grupoRepository.findAll(paginacao);
+        UsuarioApi usuario = (UsuarioApi) usuarioLogado.getPrincipal();
+        if(usuario.getEmpresa()!=null){
+            Page<Grupo> empresas = grupoRepository.findByEmpresaId(usuario.getEmpresa().getId(), paginacao);
+            return GrupoDto.converter(empresas);
+        } else if(descricao == null || descricao.equals("")) {
+            //Page<Grupo> empresas = grupoRepository.findAll(paginacao);
+            Page<Grupo> empresas = grupoRepository.findByEmpresaId(empresa, paginacao);
             return GrupoDto.converter(empresas);
         } else {
             if (filtro.equals("descricao")) {
