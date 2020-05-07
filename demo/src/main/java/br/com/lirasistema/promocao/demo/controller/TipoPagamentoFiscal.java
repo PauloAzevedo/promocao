@@ -47,7 +47,7 @@ public enum TipoPagamentoFiscal {
 
     @Override
     public String toString() {
-        return this.codigo + " - " + this.descricao;
+        return this.codigo;
     }
 
     public String getDescricao() {

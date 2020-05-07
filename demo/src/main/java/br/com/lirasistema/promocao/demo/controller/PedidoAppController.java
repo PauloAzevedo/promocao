@@ -49,7 +49,7 @@ public class PedidoAppController {
             @PageableDefault(sort = "id", direction = Sort.Direction.DESC, page = 0, size = 10) Pageable paginacao, @AuthenticationPrincipal Authentication usuarioLogado) {
         UsuarioApi usuario = (UsuarioApi) usuarioLogado.getPrincipal();
         if (usuario != null && usuario.getEmpresa() != null) {
-            Page<PedidoApp> pdvs = pedidoAppRepository.procurarTodosPorEmpresa(usuario.getEmpresa().getId(), paginacao);
+            Page<PedidoApp> pdvs = pedidoAppRepository.procurarTodosPorEmpresaESituacao(usuario.getEmpresa().getId(), situacao, paginacao);
             return PedidoAppDto.converter(pdvs);
         } else if (usuario != null && usuario.getCliente() != null) {
             if (empresa != null && situacao != null) {

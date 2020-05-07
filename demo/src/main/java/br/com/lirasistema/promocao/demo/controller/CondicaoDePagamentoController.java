@@ -41,7 +41,15 @@ public class CondicaoDePagamentoController {
     public Page<CondicaoDePagamentoDto> lista(@RequestParam(required = false) String descricao, @RequestParam(required = false) String filtro,
             @PageableDefault(sort = "id", direction = Sort.Direction.DESC, page = 0, size = 10) Pageable paginacao, @AuthenticationPrincipal Authentication usuarioLogado) {
         UsuarioApi usuario = (UsuarioApi) usuarioLogado.getPrincipal();
-        if (usuario != null) {
+        if(usuario != null && usuario.getEmpresa() != null){
+            if (descricao == null || descricao.isEmpty()) {
+                Page<CondicaoDePagamento> condicoes = condicaoDePagamentoRepository.findByEmpresaId(usuario.getEmpresa().getId(), paginacao);
+                return CondicaoDePagamentoDto.converter(condicoes);
+            } else {
+                Page<CondicaoDePagamento> condicoes = condicaoDePagamentoRepository.procurarClientePorDescricaoEEmpresa(descricao, usuario.getEmpresa().getId(), paginacao);
+                return CondicaoDePagamentoDto.converter(condicoes);
+            }
+        } else if (usuario != null && usuario.getCliente() != null) {
             if (descricao == null || descricao.isEmpty()) {
                 Page<CondicaoDePagamento> condicoes = condicaoDePagamentoRepository.findByEmpresaId(usuario.getEmpresa().getId(), paginacao);
                 return CondicaoDePagamentoDto.converter(condicoes);
@@ -56,7 +64,13 @@ public class CondicaoDePagamentoController {
     @GetMapping("/{id}")
     public ResponseEntity<?> detalhar(@PathVariable Integer id, @AuthenticationPrincipal Authentication usuarioLogado) {
         UsuarioApi usuario = (UsuarioApi) usuarioLogado.getPrincipal();
-        if (usuario != null) {
+        if(usuario != null && usuario.getEmpresa() !=null ){
+            Optional<CondicaoDePagamento> op = condicaoDePagamentoRepository.findById(id);
+            if (op.isPresent()) {
+                return ResponseEntity.ok(new DetalhesDaCondicaoDePagamentoDto(op.get()));
+            }
+            return ResponseEntity.notFound().build();
+        } else  if (usuario != null && usuario.getCliente() != null) {
             Optional<CondicaoDePagamento> op = condicaoDePagamentoRepository.procurarPorIdDaEmpresaEEmpresa(id, usuario.getEmpresa().getId());
             if (op.isPresent()) {
                 return ResponseEntity.ok(new DetalhesDaCondicaoDePagamentoDto(op.get()));
@@ -84,8 +98,8 @@ public class CondicaoDePagamentoController {
     @Transactional
     public ResponseEntity<?> atualizar(@PathVariable Integer id, @RequestBody @Valid CondicaoDePagamentoForm codicaoFormulario, @AuthenticationPrincipal Authentication usuarioLogado) {
         UsuarioApi usuario = (UsuarioApi) usuarioLogado.getPrincipal();
-        if (usuario != null) {
-            Optional<CondicaoDePagamento> opt = condicaoDePagamentoRepository.procurarPorIdDaEmpresaEEmpresa(id, usuario.getEmpresa().getId());
+        if (usuario != null && usuario.getEmpresa() != null) {
+            Optional<CondicaoDePagamento> opt = condicaoDePagamentoRepository.findById(id);
             if (opt.isPresent()) {
                 if (usuario.getEmpresa() != null && usuario.getEmpresa().getId() == opt.get().getEmpresa().getId()) {
                     CondicaoDePagamento condicaoEditavel = codicaoFormulario.atualizar(opt.get().getId(), condicaoDePagamentoRepository);

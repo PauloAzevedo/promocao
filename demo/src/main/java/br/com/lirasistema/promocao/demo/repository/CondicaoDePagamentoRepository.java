@@ -19,6 +19,8 @@ public interface CondicaoDePagamentoRepository extends JpaRepository<CondicaoDeP
     @Query("SELECT t FROM CondicaoDePagamento t WHERE t.idDaEmpresa  =  :idDaEmpresa  AND empresa_id = :empresa")
     public Optional<CondicaoDePagamento> procurarPorIdDaEmpresaEEmpresa(@Param("idDaEmpresa") Integer idDaEmpresa,@Param("empresa") Integer empresa);
     
+   
+   
     
     @Query("SELECT max(idDaEmpresa) FROM CondicaoDePagamento t WHERE  empresa_id = :empresa")
     public Integer maiorCadastro(@Param("empresa") Integer empresa);
