@@ -18,7 +18,7 @@ public interface ArquivoRepository extends JpaRepository<Arquivo, Long> {
     
     public Page<Arquivo> findByEmpresaId(Integer empresa, Pageable paginacao);
     
-    public Page<Arquivo> findByItemId(Integer empresa, Pageable paginacao);
+    public Page<Arquivo> findByItemId(Long item, Pageable paginacao);
     
     @Query("SELECT t FROM Arquivo t WHERE t.tipo  =  :tipo  AND empresa_id = :empresa")
     public Page<Arquivo> procurarPorTipoEEmpresa(@Param("tipo") Integer tipo,@Param("empresa") Integer empresa, Pageable paginacao);

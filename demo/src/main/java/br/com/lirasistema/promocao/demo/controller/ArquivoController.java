@@ -1,15 +1,9 @@
 package br.com.lirasistema.promocao.demo.controller;
 
 import br.com.lirasistema.promocao.demo.modelo.Arquivo;
-import br.com.lirasistema.promocao.demo.modelo.Item;
-import br.com.lirasistema.promocao.demo.modelo.ItemPedidoApp;
 import br.com.lirasistema.promocao.demo.modelo.UsuarioApi;
 import br.com.lirasistema.promocao.demo.modelo.dto.ArquivoDto;
-import br.com.lirasistema.promocao.demo.modelo.dto.DetalhesItemDto;
-import br.com.lirasistema.promocao.demo.modelo.dto.ItemDto;
 import br.com.lirasistema.promocao.demo.modelo.form.ArquivoForm;
-import br.com.lirasistema.promocao.demo.modelo.form.ItemForm;
-import br.com.lirasistema.promocao.demo.modelo.form.ItemFormEditar;
 import br.com.lirasistema.promocao.demo.repository.ArquivoRepository;
 import br.com.lirasistema.promocao.demo.repository.ItemRepository;
 import br.com.lirasistema.promocao.demo.utilidades.Util;
@@ -53,14 +47,18 @@ public class ArquivoController {
 
     @GetMapping
     public Page<ArquivoDto> lista(@RequestParam(required = false) Integer tipo, @RequestParam(required = false) String empresa,
+            @RequestParam(required = false) Long item,
             @PageableDefault(sort = "id", direction = Sort.Direction.DESC, page = 0, size = 10) Pageable paginacao, @AuthenticationPrincipal Authentication usuarioLogado) {
         UsuarioApi usuario = (UsuarioApi) usuarioLogado.getPrincipal();
         if (usuario != null && usuario.getEmpresa() != null) {
             if (tipo == null) {
                 Page<Arquivo> itens = arquivoRepository.findByEmpresaId(usuario.getEmpresa().getId(), paginacao);
                 return ArquivoDto.converter(itens);
-            } else {
+            } else if (tipo == 0){
                 Page<Arquivo> itens = arquivoRepository.procurarPorTipoEEmpresa(tipo, usuario.getEmpresa().getId(), paginacao);
+                return ArquivoDto.converter(itens);
+            } else {
+                 Page<Arquivo> itens = arquivoRepository.findByItemId(item, paginacao);
                 return ArquivoDto.converter(itens);
             }
         } else if (usuario != null && usuario.getCliente() != null) {
@@ -69,7 +67,7 @@ public class ArquivoController {
                 Page<Arquivo> itens = arquivoRepository.procurarPorTipoEEmpresa(tipo, empresaCorreta, paginacao);
                 return ArquivoDto.converter(itens);
             } else {
-                Page<Arquivo> itens = arquivoRepository.findByEmpresaId(empresaCorreta, paginacao);
+                Page<Arquivo> itens = arquivoRepository.findByItemId(item, paginacao);
                 return ArquivoDto.converter(itens);
             }            
         }
