@@ -17,14 +17,18 @@ public class AtualizarPedidoAppForm {
 
     @NotNull
     private Double totalValorDescontos;
-    
+
     @NotNull
     private Double totalValorProdutos;
 
     @NotNull
     private Integer situacao;
-    
+
     private Integer condicaoDePagamento;
+
+    private String observacao;
+
+    private Double valorParaTroco;
 
     public Double getTotalValorAcrescimos() {
         return totalValorAcrescimos;
@@ -65,8 +69,22 @@ public class AtualizarPedidoAppForm {
     public void setTotalValorProdutos(Double totalValorProdutos) {
         this.totalValorProdutos = totalValorProdutos;
     }
-    
-       
+
+    public String getObservacao() {
+        return observacao;
+    }
+
+    public void setObservacao(String observacao) {
+        this.observacao = observacao;
+    }
+
+    public Double getValorParaTroco() {
+        return valorParaTroco;
+    }
+
+    public void setValorParaTroco(Double valorParaTroco) {
+        this.valorParaTroco = valorParaTroco;
+    }
 
     public PedidoApp atualizar(Long id, UsuarioApi usuario, ItemRepository itemRepository, PedidoAppRepository pedidoAppRepository, CondicaoDePagamentoRepository condicaoDePagamentoRepository) {
         PedidoApp pedidoE = pedidoAppRepository.getOne(id);
@@ -75,19 +93,27 @@ public class AtualizarPedidoAppForm {
         pedidoE.setTotalValorProdutos(totalValorProdutos);
         Double totalPedido = pedidoE.getTotalValorProdutos() + pedidoE.getTotalValorAcrescimos() - pedidoE.getTotalValorDescontos();
         pedidoE.setTotalValorPedido(totalPedido);
-        if(situacao==1){
+        pedidoE.setObservacao(observacao);
+        if (situacao == 1) {
             pedidoE.setSituacao(situacao);
             pedidoE.setDataAceite(LocalDateTime.now());
-        } else if (situacao==2) {
+        } else if (situacao == 2) {
             pedidoE.setSituacao(situacao);
             pedidoE.setDataEntrega(LocalDateTime.now());
         } else {
             pedidoE.setSituacao(situacao);
         }
-        if(condicaoDePagamento!=null){
+        if (condicaoDePagamento != null) {
             Optional<CondicaoDePagamento> cond = condicaoDePagamentoRepository.procurarPorIdDaEmpresaEEmpresa(condicaoDePagamento, pedidoE.getEmpresa().getId());
-            if(cond.isPresent()){
+            if (cond.isPresent()) {
                 pedidoE.setCondicaoDePagamento(cond.get());
+                if (cond.get().getTipoPagamento().DINHEIRO.getCodigo().equals("01")) {
+                    try {
+                        pedidoE.setValorParaTroco(valorParaTroco);
+                    } catch (Exception ex) {
+                        pedidoE.setValorParaTroco(0.0);
+                    }
+                }
             }
         }
         return pedidoE;

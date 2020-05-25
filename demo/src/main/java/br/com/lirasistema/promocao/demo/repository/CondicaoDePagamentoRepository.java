@@ -11,7 +11,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface CondicaoDePagamentoRepository extends JpaRepository<CondicaoDePagamento, Integer> {
 
-    public Page<CondicaoDePagamento> findByEmpresaId(Integer id, Pageable paginacao);
+    public Page<CondicaoDePagamento> findByEmpresaId(Integer empresa_id, Pageable paginacao);
 
     @Query("SELECT t FROM CondicaoDePagamento t WHERE t.descricao  LIKE %:descricao% AND empresa_id = :empresa")
     public Page<CondicaoDePagamento> procurarClientePorDescricaoEEmpresa(@Param("descricao") String descricao, @Param("empresa") Integer empresa, Pageable paginacao);

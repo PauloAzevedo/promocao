@@ -15,6 +15,7 @@ public class DetalhesEmpresaDto {
     private String hashTexto;    
     private String cnpj;    
     private EnderecoDto endereco;
+    private Double valorFrete;
     
     public DetalhesEmpresaDto(Empresa emp) {
         this.id = emp.getId();
@@ -28,6 +29,7 @@ public class DetalhesEmpresaDto {
         this.hashTexto = emp.getHashTexto();
         this.cnpj = emp.getCnpj();
         this.endereco = new EnderecoDto(emp.getEndereco());
+        this.valorFrete = emp.getValorFrete();
     }
 
     public Integer getId() {
@@ -74,6 +76,10 @@ public class DetalhesEmpresaDto {
         return endereco;
     }
 
-       
+    public Double getValorFrete() {
+        return valorFrete;
+    }
+
+    
     
 }

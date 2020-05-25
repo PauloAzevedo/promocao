@@ -41,6 +41,10 @@ public class PedidoApp {
     @ManyToOne
     private CondicaoDePagamento condicaoDePagamento;
     
+    private Double valorParaTroco;
+    
+    private String observacao;
+    
     public PedidoApp(){
         
     }
@@ -160,7 +164,22 @@ public class PedidoApp {
     public void setCondicaoDePagamento(CondicaoDePagamento condicaoDePagamento) {
         this.condicaoDePagamento = condicaoDePagamento;
     }
-    
+
+    public Double getValorParaTroco() {
+        return valorParaTroco;
+    }
+
+    public void setValorParaTroco(Double valorParaTroco) {
+        this.valorParaTroco = valorParaTroco;
+    }
+
+    public String getObservacao() {
+        return observacao;
+    }
+
+    public void setObservacao(String observacao) {
+        this.observacao = observacao;
+    }
     
     
 }

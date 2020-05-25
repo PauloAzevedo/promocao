@@ -49,6 +49,8 @@ public class EmpresaController {
     
     @Autowired
     private UsuarioRepository usuarioRepository;
+    
+    
 
     @GetMapping
     public Page<EmpresaDto> lista(@RequestParam(required = false) String descricao, @RequestParam(required = false) String filtro,

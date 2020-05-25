@@ -29,6 +29,8 @@ public class Empresa {
     @ManyToOne
     private Endereco endereco;
     
+    private Double valorFrete;
+    
     
     public Empresa(){
         
@@ -45,6 +47,7 @@ public class Empresa {
         this.hashTexto = Util.md5(String.valueOf(Calendar.getInstance().getTimeInMillis() + Util.gerarNumeroAleatorio(99999)));        
         this.cnpj = cnpj;
         this.endereco = endereco;
+        this.valorFrete = 0.0;
     }
     
     
@@ -141,6 +144,14 @@ public class Empresa {
     public String toString() {
         return id + " - " + fantasia;
     }
-   
+
+    public Double getValorFrete() {
+        return valorFrete;
+    }
+
+    public void setValorFrete(Double valorFrete) {
+        this.valorFrete = valorFrete;
+    }
+        
         
 }

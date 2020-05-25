@@ -19,6 +19,9 @@ public class PedidoAppDto {
     private Double totalValorDescontos;
     private Double totalValorPedido;
     private String condicaoDePagamento;
+    private String caminhoLogo;
+    private Double valorParaTroco;
+    private String observacao;
 
     public PedidoAppDto(PedidoApp pedido) {
         this.id = pedido.getId();
@@ -40,6 +43,11 @@ public class PedidoAppDto {
         if (pedido.getCondicaoDePagamento() != null) {
             this.condicaoDePagamento = pedido.getCondicaoDePagamento().toString();
         }
+        if (pedido.getEmpresa().getCaminhoLogo() != null) {
+            this.caminhoLogo = pedido.getEmpresa().getCaminhoLogo();
+        }
+        this.valorParaTroco = pedido.getValorParaTroco();
+        this.observacao = pedido.getObservacao();
     }
 
     public Long getId() {
@@ -150,4 +158,16 @@ public class PedidoAppDto {
         return pedidos.map(PedidoAppDto::new);
     }
 
+    public String getCaminhoLogo() {
+        return caminhoLogo;
+    }
+
+    public Double getValorParaTroco() {
+        return valorParaTroco;
+    }
+
+    public String getObservacao() {
+        return observacao;
+    }
+    
 }

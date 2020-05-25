@@ -39,6 +39,7 @@ public class CondicaoDePagamentoController {
 
     @GetMapping
     public Page<CondicaoDePagamentoDto> lista(@RequestParam(required = false) String descricao, @RequestParam(required = false) String filtro,
+            @RequestParam(required = false) Integer  empresa,
             @PageableDefault(sort = "id", direction = Sort.Direction.DESC, page = 0, size = 10) Pageable paginacao, @AuthenticationPrincipal Authentication usuarioLogado) {
         UsuarioApi usuario = (UsuarioApi) usuarioLogado.getPrincipal();
         if(usuario != null && usuario.getEmpresa() != null){
@@ -49,16 +50,15 @@ public class CondicaoDePagamentoController {
                 Page<CondicaoDePagamento> condicoes = condicaoDePagamentoRepository.procurarClientePorDescricaoEEmpresa(descricao, usuario.getEmpresa().getId(), paginacao);
                 return CondicaoDePagamentoDto.converter(condicoes);
             }
-        } else if (usuario != null && usuario.getCliente() != null) {
+        } else {
             if (descricao == null || descricao.isEmpty()) {
-                Page<CondicaoDePagamento> condicoes = condicaoDePagamentoRepository.findByEmpresaId(usuario.getEmpresa().getId(), paginacao);
+                Page<CondicaoDePagamento> condicoes = condicaoDePagamentoRepository.findByEmpresaId(empresa, paginacao);
                 return CondicaoDePagamentoDto.converter(condicoes);
             } else {
-                Page<CondicaoDePagamento> condicoes = condicaoDePagamentoRepository.procurarClientePorDescricaoEEmpresa(descricao, usuario.getEmpresa().getId(), paginacao);
+                Page<CondicaoDePagamento> condicoes = condicaoDePagamentoRepository.procurarClientePorDescricaoEEmpresa(descricao, empresa, paginacao);
                 return CondicaoDePagamentoDto.converter(condicoes);
             }
         }
-        return null;
     }
 
     @GetMapping("/{id}")

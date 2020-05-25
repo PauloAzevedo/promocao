@@ -55,6 +55,8 @@ public class EmpresaForm {
     
     @NotNull @NotEmpty
     private String cidade;
+    
+    private String valorFrete;
 
     public String getLogradouro() {
         return logradouro;
@@ -175,8 +177,16 @@ public class EmpresaForm {
     public void setLojaAtiva(Integer lojaAtiva) {
         this.lojaAtiva = lojaAtiva;
     }
-    
-      
+
+    public String getValorFrete() {
+        return valorFrete;
+    }
+
+    public void setValorFrete(String valorFrete) {
+        this.valorFrete = valorFrete;
+    }
+
+          
     
     public Empresa converter(EnderecoRepository enderecoRepository, CidadeRepository cidadeRepository) {   
         Endereco end = null;
@@ -198,6 +208,11 @@ public class EmpresaForm {
         empE.setLojaAtiva(this.lojaAtiva);
         empE.setRamo(this.ramo);
         empE.setLojaAtiva(this.lojaAtiva);
+        try {
+            empE.setValorFrete(Double.parseDouble(valorFrete));
+        } catch ( Exception ex) {
+            empE.setValorFrete(0.0);
+        }
         Optional<Endereco> endE = enderecoRepository.findById(empE.getEndereco().getId());
         if(endE.isPresent()){
             Endereco endObj = endE.get();

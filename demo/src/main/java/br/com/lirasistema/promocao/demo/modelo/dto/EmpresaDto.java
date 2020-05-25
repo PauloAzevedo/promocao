@@ -15,6 +15,7 @@ public class EmpresaDto {
     private Integer lojaAtiva; 
     private String hashTexto;    
     private String cnpj;
+    private Double valorFrete;
     
     public EmpresaDto(Empresa emp) {
         this.id = emp.getId();
@@ -27,6 +28,7 @@ public class EmpresaDto {
         this.lojaAtiva = emp.getLojaAtiva();
         this.hashTexto = emp.getHashTexto();
         this.cnpj = emp.getCnpj();
+        this.valorFrete = emp.getValorFrete();
     }
 
     public Integer getId() {
@@ -68,7 +70,12 @@ public class EmpresaDto {
     public String getCnpj() {
         return cnpj;
     }
+
+    public Double getValorFrete() {
+        return valorFrete;
+    }
     
+      
     public static Page<EmpresaDto> converter(Page<Empresa> empresas) {
         return empresas.map(EmpresaDto::new);
     }

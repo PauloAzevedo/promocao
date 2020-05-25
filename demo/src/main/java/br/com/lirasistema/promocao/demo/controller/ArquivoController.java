@@ -5,6 +5,7 @@ import br.com.lirasistema.promocao.demo.modelo.UsuarioApi;
 import br.com.lirasistema.promocao.demo.modelo.dto.ArquivoDto;
 import br.com.lirasistema.promocao.demo.modelo.form.ArquivoForm;
 import br.com.lirasistema.promocao.demo.repository.ArquivoRepository;
+import br.com.lirasistema.promocao.demo.repository.EmpresaRepository;
 import br.com.lirasistema.promocao.demo.repository.ItemRepository;
 import br.com.lirasistema.promocao.demo.utilidades.Util;
 import java.net.URI;
@@ -44,6 +45,9 @@ public class ArquivoController {
 
     @Autowired
     private ItemRepository itemRepository;
+    
+    @Autowired
+    private EmpresaRepository empresaRepository;
 
     @GetMapping
     public Page<ArquivoDto> lista(@RequestParam(required = false) Integer tipo, @RequestParam(required = false) String empresa,
