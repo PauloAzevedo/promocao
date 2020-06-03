@@ -23,7 +23,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     //public Optional<Item> procurarPorGrupoEEmpresa(@Param("grupo_id") Integer grupo_id, @Param("empresa") Integer empresa);
 
 
-    
+    public Page<Item> findByGrupoId(Integer grupo, Pageable paginacao);
    
     
 }

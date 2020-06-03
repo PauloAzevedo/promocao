@@ -7,11 +7,13 @@ public class GrupoDto {
     private Integer id;
     private String descricao;
     private String empresa;
+    private Integer situacao;
 
     public GrupoDto(Grupo grupo) {
         this.id = grupo.getId();
         this.descricao = grupo.getDescricao();
         this.empresa = grupo.getEmpresa().toString();
+        this.situacao = grupo.getSituacao();
     }
 
     public Integer getId() {
@@ -29,6 +31,10 @@ public class GrupoDto {
     public String getEmpresa() {
         return empresa;
     }
-    
+
+    public Integer getSituacao() {
+        return situacao;
+    }
+          
     
 }

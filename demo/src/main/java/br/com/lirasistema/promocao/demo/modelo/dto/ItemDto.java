@@ -12,7 +12,7 @@ public class ItemDto {
     private Double valor;
     private String caminhoImagem;
     private String unidadeComercial;
-    private String hashTexto;
+    //private String hashTexto;
     private Integer situacao;
     private Integer empresa;
     
@@ -24,7 +24,7 @@ public class ItemDto {
         this.valor = item.getValor();
         this.caminhoImagem = item.getCaminhoImagem();
         this.unidadeComercial = item.getUnidadeComercial();
-        this.hashTexto = item.getHashTexto();
+        //this.hashTexto = item.getHashTexto();
         this.situacao = item.getSituacao();
         this.empresa = item.getEmpresa().getId();
     }
@@ -57,9 +57,9 @@ public class ItemDto {
         return unidadeComercial;
     }
 
-    public String getHashTexto() {
-        return hashTexto;
-    }
+//    public String getHashTexto() {
+//        return hashTexto;
+//    }
 
     public Integer getSituacao() {
         return situacao;

@@ -47,6 +47,7 @@ public class ItemController {
 
     @GetMapping
     public Page<ItemDto> lista(@RequestParam(required = false) String descricao, @RequestParam(required = false) String filtro,
+            @RequestParam(required = false) Integer grupo,
             @PageableDefault(sort = "id", direction = Sort.Direction.DESC, page = 0, size = 10) Pageable paginacao, @AuthenticationPrincipal Authentication usuarioLogado) {
         UsuarioApi usuario = (UsuarioApi) usuarioLogado.getPrincipal();
         if (usuario != null && usuario.getEmpresa() != null) {
@@ -60,9 +61,14 @@ public class ItemController {
                 }
             }
         } else if (usuario != null && usuario.getCliente() != null) {
-            Integer empresa = Util.validarInteiro(descricao);
-            Page<Item> itens = itemRepository.findByEmpresaId(empresa, paginacao);
-            return ItemDto.converter(itens);
+            if (grupo != null) {                
+                Page<Item> itens = itemRepository.findByGrupoId(grupo, paginacao);
+                return ItemDto.converter(itens);
+            } else {
+                Integer empresa = Util.validarInteiro(descricao);
+                Page<Item> itens = itemRepository.findByEmpresaId(empresa, paginacao);
+                return ItemDto.converter(itens);
+            }
         }
         return null;
     }

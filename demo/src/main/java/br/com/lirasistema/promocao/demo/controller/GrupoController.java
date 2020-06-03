@@ -3,6 +3,7 @@ package br.com.lirasistema.promocao.demo.controller;
 import br.com.lirasistema.promocao.demo.modelo.Grupo;
 import br.com.lirasistema.promocao.demo.modelo.UsuarioApi;
 import br.com.lirasistema.promocao.demo.modelo.dto.GrupoDto;
+import br.com.lirasistema.promocao.demo.modelo.dto.GrupoDtoTotal;
 import br.com.lirasistema.promocao.demo.modelo.form.GrupoForm;
 import br.com.lirasistema.promocao.demo.repository.GrupoRepository;
 import java.net.URI;
@@ -40,10 +41,10 @@ public class GrupoController {
     public Page<GrupoDto> lista(@RequestParam(required = false) String descricao, @RequestParam(required = false) Integer empresa, @RequestParam(required = false) String filtro,
             @PageableDefault(sort = "id", direction = Sort.Direction.DESC, page = 0, size = 10) Pageable paginacao, @AuthenticationPrincipal Authentication usuarioLogado) {
         UsuarioApi usuario = (UsuarioApi) usuarioLogado.getPrincipal();
-        if(usuario.getEmpresa()!=null){
+        if (usuario.getEmpresa() != null) {
             Page<Grupo> empresas = grupoRepository.findByEmpresaId(usuario.getEmpresa().getId(), paginacao);
             return GrupoDto.converter(empresas);
-        } else if(descricao == null || descricao.equals("")) {
+        } else if (descricao == null || descricao.equals("")) {
             //Page<Grupo> empresas = grupoRepository.findAll(paginacao);
             Page<Grupo> empresas = grupoRepository.findByEmpresaId(empresa, paginacao);
             return GrupoDto.converter(empresas);
@@ -51,7 +52,7 @@ public class GrupoController {
             if (filtro.equals("descricao")) {
                 Page<Grupo> empresas = grupoRepository.findByDescricaoContaining(descricao, paginacao);
                 return GrupoDto.converter(empresas);
-            } else if (filtro.equals("empresa")) {
+            } else if (empresa != null) {
                 Page<Grupo> empresas = grupoRepository.findByEmpresaId(empresa, paginacao);
                 return GrupoDto.converter(empresas);
             } else {
@@ -74,6 +75,25 @@ public class GrupoController {
         //return new ResponseEntity<String>("Você não tem permissão para executar essa operação!", HttpStatus.FORBIDDEN);
     }
 
+    @GetMapping("/{id}/total")
+    public ResponseEntity<?> total(@PathVariable Integer id, @AuthenticationPrincipal Authentication usuarioLogado) {
+        //UsuarioApi usuario = (UsuarioApi) usuarioLogado.getPrincipal();
+        //if (usuario != null) {
+        Optional<Grupo> grupo = grupoRepository.findById(id);
+        if (grupo.isPresent()) {
+            Integer total = 0;
+            try {
+                total = grupoRepository.itensPorGrupo(grupo.get().getId());
+            } catch (Exception ex) {
+                total = 0;
+            }
+            return ResponseEntity.ok(new GrupoDtoTotal(grupo.get(), total));
+        }
+        return ResponseEntity.notFound().build();
+        //}
+        //return new ResponseEntity<String>("Você não tem permissão para executar essa operação!", HttpStatus.FORBIDDEN);
+    }
+
     @PostMapping
     @Transactional
     public ResponseEntity<?> cadastrar(@RequestBody @Valid GrupoForm grupoF, UriComponentsBuilder uriBuilder, @AuthenticationPrincipal Authentication usuarioLogado) {
@@ -86,22 +106,22 @@ public class GrupoController {
         }
         return new ResponseEntity<String>("Você não tem permissão para executar essa operação!", HttpStatus.FORBIDDEN);
     }
-    
+
     @PutMapping("/{id}")
     @Transactional
     public ResponseEntity<?> atualizar(@PathVariable Integer id, @RequestBody @Valid GrupoForm grupoE, @AuthenticationPrincipal Authentication usuarioLogado) {
         UsuarioApi usuario = (UsuarioApi) usuarioLogado.getPrincipal();
         Optional<Grupo> opt = grupoRepository.findById(id);
         if (opt.isPresent()) {
-            if(usuario.getEmpresa().getHashTexto().equals(opt.get().getEmpresa().getHashTexto())){
-            Grupo grupo = grupoE.atualizar(id, grupoRepository);
-            return ResponseEntity.ok(new GrupoDto(grupo));
+            if (usuario.getEmpresa().getHashTexto().equals(opt.get().getEmpresa().getHashTexto())) {
+                Grupo grupo = grupoE.atualizar(id, grupoRepository);
+                return ResponseEntity.ok(new GrupoDto(grupo));
             }
             return new ResponseEntity<String>("Você não tem permissão para executar essa operação!", HttpStatus.FORBIDDEN);
         }
         return ResponseEntity.notFound().build();
     }
-    
+
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity<?> remover(@PathVariable Integer id, @AuthenticationPrincipal Authentication usuarioLogado, @RequestBody @Valid GrupoForm grupoD) {
@@ -111,7 +131,7 @@ public class GrupoController {
         }
         //verifica se quem ta excluindo eh o proprio dono do topico:
         UsuarioApi usuario = (UsuarioApi) usuarioLogado.getPrincipal();
-        if(usuario.getEmpresa() !=null && usuario.getEmpresa().getHashTexto().equals(opt.get().getEmpresa().getHashTexto())){
+        if (usuario.getEmpresa() != null && usuario.getEmpresa().getHashTexto().equals(opt.get().getEmpresa().getHashTexto())) {
             Grupo topico = grupoD.alterarSituacao(id, grupoRepository);
             return ResponseEntity.ok().build();
         }
